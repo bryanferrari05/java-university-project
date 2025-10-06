@@ -1,10 +1,10 @@
 package theknife;
 
 import theknife.gui.LoginFrame;
-import javax.swing.SwingUtilities;  /*questo codice fa partire la finestra LoginFrame, 
-                                    invece di println*/
+import javax.swing.SwingUtilities;
+
 public class TheKnife {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginFrame());
+        SwingUtilities.invokeLater(LoginFrame::new);
     }
 }

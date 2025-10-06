@@ -2,6 +2,7 @@ package theknife.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import theknife.utils.FileManager;
 
 public class LoginFrame extends JFrame {
     public LoginFrame() {
@@ -17,19 +18,32 @@ public class LoginFrame extends JFrame {
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
         JButton loginButton = new JButton("Login");
-        JButton registerButton = new JButton("Registrati");
 
         panel.add(new JLabel("Username:"));
         panel.add(usernameField);
         panel.add(new JLabel("Password:"));
         panel.add(passwordField);
+        panel.add(new JLabel());
         panel.add(loginButton);
-        panel.add(registerButton);
 
         add(title, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
 
-        setLocationRelativeTo(null); // centra la finestra
+        // LOGIN BUTTON
+        loginButton.addActionListener(e -> {
+            String user = usernameField.getText().trim();
+            String pass = new String(passwordField.getPassword()).trim();
+
+            if (FileManager.verificaCredenziali(user, pass)) {
+                JOptionPane.showMessageDialog(this, "Accesso effettuato!", "Login", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+                new HomeFrame(user);
+            } else {
+                JOptionPane.showMessageDialog(this, "Credenziali errate.", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 }
