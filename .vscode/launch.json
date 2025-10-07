@@ -13,12 +13,7 @@
       "name": "TheKnife",
       "request": "launch",
       "mainClass": "theknife.TheKnife",
-      "projectName": "JAVA-UNIVERSITY-PROJECT",
-      "classPaths": [
-        "${workspaceFolder}/bin",
-        "${workspaceFolder}/lib/gson-2.10.1.jar",
-        "${workspaceFolder}/resources"
-      ]
+      "projectName": "JAVA-UNIVERSITY-PROJECT"
     }
   ]
 }
