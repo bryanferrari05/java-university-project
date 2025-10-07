@@ -1,11 +1,16 @@
 package theknife.gui;
 
-import javax.swing.*;
 import java.awt.*;
-import theknife.utils.FileManager;
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import javax.swing.*;
 import theknife.utils.Theme;
 
 public class LoginFrame extends JFrame {
+
+    private static final String PATH_UTENTI = "data/utenti.csv";
+
     public LoginFrame() {
         setTitle("TheKnife - Login");
         setSize(420, 350);
@@ -41,12 +46,17 @@ public class LoginFrame extends JFrame {
         add(title, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
 
-        // LOGIN listener
+        // --- LOGIN listener ---
         loginButton.addActionListener(e -> {
             String user = usernameField.getText().trim();
             String pass = new String(passwordField.getPassword()).trim();
 
-            if (FileManager.verificaCredenziali(user, pass)) {
+            if (user.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Inserisci username e password.", "Attenzione", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (verificaCredenziali(user, pass)) {
                 JOptionPane.showMessageDialog(this, "Accesso effettuato!", "Login", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
                 new HomeFrame(user);
@@ -55,12 +65,54 @@ public class LoginFrame extends JFrame {
             }
         });
 
-        // REGISTRAZIONE listener
-        registerButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Funzione di registrazione in arrivo 💡", "Info", JOptionPane.INFORMATION_MESSAGE);
-        });
+        // --- REGISTRAZIONE listener ---
+        registerButton.addActionListener(e -> new RegisterFrame());
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    // 🔍 Verifica le credenziali confrontando l'hash della password
+    private boolean verificaCredenziali(String username, String password) {
+        String hashedInput = hashPassword(password);
+
+        try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("nome,")) continue; // salta intestazione
+                String[] campi = line.split(",");
+                if (campi.length >= 5) {
+                    String user = campi[2].trim();
+                    String storedHash = campi[3].trim();
+
+                    if (user.equals(username) && storedHash.equals(hashedInput)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(this, "File utenti.csv non trovato.\nAssicurati che esista nella cartella /data.", "Errore", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Errore nella lettura del file utenti.csv:\n" + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return false;
+    }
+
+    // 🔐 Crea l'hash SHA-256 della password
+    private static String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Errore algoritmo SHA-256", e);
+        }
     }
 }
