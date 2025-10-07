@@ -14,7 +14,7 @@ public class LoginFrame extends JFrame {
         getContentPane().setBackground(Theme.BACKGROUND);
 
         // Titolo elegante
-        JLabel title = new JLabel("🍴 TheKnife", SwingConstants.CENTER);
+        JLabel title = new JLabel("TheKnife", SwingConstants.CENTER);
         title.setFont(Theme.TITLE_FONT);
         title.setForeground(Theme.ACCENT);
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));

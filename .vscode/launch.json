@@ -3,10 +3,22 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Run TheKnife",
+      "name": "TheKnife",
       "request": "launch",
       "mainClass": "theknife.TheKnife",
-      "cwd": "${workspaceFolder}"     // <-- togli /src
+      "projectName": "java-university-project_64e53055"
+    },
+    {
+      "type": "java",
+      "name": "TheKnife",
+      "request": "launch",
+      "mainClass": "theknife.TheKnife",
+      "projectName": "JAVA-UNIVERSITY-PROJECT",
+      "classPaths": [
+        "${workspaceFolder}/bin",
+        "${workspaceFolder}/lib/gson-2.10.1.jar",
+        "${workspaceFolder}/resources"
+      ]
     }
   ]
 }
