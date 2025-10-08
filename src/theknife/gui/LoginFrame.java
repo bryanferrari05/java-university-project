@@ -57,8 +57,8 @@ public class LoginFrame extends JFrame {
             }
 
             if (verificaCredenziali(user, pass)) {
-                dispose();
-                new HomeFrame(user);
+                dispose();                // chiude LoginFrame
+                new HomeFrame(user);      // apre direttamente HomeFrame
             } else {
                 JOptionPane.showMessageDialog(this, "Credenziali errate.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
@@ -72,34 +72,26 @@ public class LoginFrame extends JFrame {
     }
 
     // 🔍 Verifica le credenziali confrontando l'hash della password
-    private boolean verificaCredenziali(String username, String password) 
-    {
+    private boolean verificaCredenziali(String username, String password) {
         String hashedInput = hashPassword(password);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) 
-        {
+        try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
             String line;
-            while ((line = br.readLine()) != null) 
-            {
+            while ((line = br.readLine()) != null) {
                 if (line.startsWith("nome,")) continue; // salta intestazione
                 String[] campi = line.split(",");
-                if (campi.length >= 5) 
-                {
+                if (campi.length >= 5) {
                     String user = campi[2].trim();
                     String storedHash = campi[3].trim();
 
-                    if (user.equals(username) && storedHash.equals(hashedInput)) 
-                    {
+                    if (user.equals(username) && storedHash.equals(hashedInput)) {
                         return true;
                     }
                 }
             }
-        } 
-        catch (FileNotFoundException e) 
-        {
+        } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(this, "File utenti.csv non trovato.\nAssicurati che esista nella cartella /data.", "Errore", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException e) 
-        {
+        } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Errore nella lettura del file utenti.csv:\n" + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
 

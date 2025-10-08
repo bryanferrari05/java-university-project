@@ -11,7 +11,7 @@ public class NavbarPanel extends JPanel {
         setBackground(Theme.ACCENT);
         setPreferredSize(new Dimension(0, 60));
 
-        // Pulsante menu con icona vera (niente più quadrato bianco)
+        // Pulsante menu con icona
         JButton menuButton = new JButton();
         ImageIcon menuIc = IconUtils.load("/theknife/resources/images/icon-menu.png", 22);
         if (menuIc != null) {
@@ -23,7 +23,7 @@ public class NavbarPanel extends JPanel {
         menuButton.setForeground(Color.WHITE);
         menuButton.setFocusPainted(false);
         menuButton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-        menuButton.addActionListener(e -> onMenuClick.run());
+        menuButton.addActionListener(e -> onMenuClick.run()); // Chiama il metodo toggle
 
         // Logo + titolo
         JLabel title;
