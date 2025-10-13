@@ -18,13 +18,11 @@ public class LoginFrame extends JFrame {
         setLayout(new BorderLayout());
         getContentPane().setBackground(Theme.BACKGROUND);
 
-        // Titolo elegante
         JLabel title = new JLabel("TheKnife", SwingConstants.CENTER);
         title.setFont(Theme.TITLE_FONT);
         title.setForeground(Theme.ACCENT);
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
 
-        // Pannello campi
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Theme.BACKGROUND);
         GridBagConstraints c = new GridBagConstraints();
@@ -46,72 +44,69 @@ public class LoginFrame extends JFrame {
         add(title, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
 
-        // --- LOGIN listener ---
         loginButton.addActionListener(e -> {
             String user = usernameField.getText().trim();
             String pass = new String(passwordField.getPassword()).trim();
 
-            if (user.isEmpty() || pass.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Inserisci username e password.", "Attenzione", JOptionPane.WARNING_MESSAGE);
+            if(user.isEmpty() || pass.isEmpty()){
+                JOptionPane.showMessageDialog(this,"Inserisci username e password.","Attenzione",JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            if (verificaCredenziali(user, pass)) {
-                dispose();                // chiude LoginFrame
-                new HomeFrame(user);      // apre direttamente HomeFrame
+            String ruolo = verificaCredenziali(user, pass);
+            if(ruolo != null){
+                dispose();
+                new HomeFrame(user, ruolo);
             } else {
-                JOptionPane.showMessageDialog(this, "Credenziali errate.", "Errore", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Credenziali errate.","Errore",JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        // --- REGISTRAZIONE listener ---
         registerButton.addActionListener(e -> new RegisterFrame());
 
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    // 🔍 Verifica le credenziali confrontando l'hash della password
-    private boolean verificaCredenziali(String username, String password) {
+    private String verificaCredenziali(String username, String password){
         String hashedInput = hashPassword(password);
-
-        try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
+        try(BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))){
             String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("nome,")) continue; // salta intestazione
+            while((line=br.readLine())!=null){
+                if(line.startsWith("nome,")) continue;
                 String[] campi = line.split(",");
-                if (campi.length >= 5) {
+                if(campi.length>=5){
                     String user = campi[2].trim();
                     String storedHash = campi[3].trim();
+                    String ruolo = campi[4].trim();
 
-                    if (user.equals(username) && storedHash.equals(hashedInput)) {
-                        return true;
+                    // Debug temporaneo
+                    System.out.println("Verifico user: "+user+" , storedHash: "+storedHash+" , inputHash: "+hashedInput);
+
+                    if(user.equals(username) && storedHash.equalsIgnoreCase(hashedInput)){
+                        return ruolo;
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "File utenti.csv non trovato.\nAssicurati che esista nella cartella /data.", "Errore", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Errore nella lettura del file utenti.csv:\n" + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this,"Errore: "+e.getMessage(),"Errore",JOptionPane.ERROR_MESSAGE);
         }
-
-        return false;
+        return null;
     }
 
-    // 🔐 Crea l'hash SHA-256 della password
-    private static String hashPassword(String password) {
-        try {
+    private static String hashPassword(String password){
+        try{
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes());
+            byte[] hash = md.digest(password.getBytes("UTF-8"));
             StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
+            for(byte b: hash){
                 String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
+                if(hex.length()==1) hexString.append('0');
                 hexString.append(hex);
             }
             return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Errore algoritmo SHA-256", e);
+        }catch(Exception e){
+            throw new RuntimeException("Errore hash SHA-256", e);
         }
     }
 }
