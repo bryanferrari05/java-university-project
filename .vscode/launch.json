@@ -6,6 +6,20 @@
       "name": "TheKnife",
       "request": "launch",
       "mainClass": "theknife.TheKnife",
+      "projectName": "GitHub_fff65502"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "Main",
+      "projectName": "GitHub_fff65502"
+    },
+    {
+      "type": "java",
+      "name": "TheKnife",
+      "request": "launch",
+      "mainClass": "theknife.TheKnife",
       "projectName": "java-university-project_64e53055"
     },
     {
