@@ -3,7 +3,6 @@ package theknife.gui;
 import java.awt.*;
 import java.io.*;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import javax.swing.*;
 import theknife.utils.Theme;
 
@@ -14,7 +13,7 @@ public class LoginFrame extends JFrame {
     public LoginFrame() {
         setTitle("TheKnife - Login");
         setSize(420, 350);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
         getContentPane().setBackground(Theme.BACKGROUND);
 
@@ -32,81 +31,72 @@ public class LoginFrame extends JFrame {
         JTextField usernameField = new JTextField(15);
         JPasswordField passwordField = new JPasswordField(15);
         JButton loginButton = Theme.styledButton("Accedi");
-        JButton registerButton = Theme.styledButton("Registrati");
+        JButton cancelButton = Theme.styledButton("Annulla");
 
         c.gridx = 0; c.gridy = 0; panel.add(new JLabel("Username:"), c);
         c.gridx = 1; panel.add(usernameField, c);
         c.gridx = 0; c.gridy = 1; panel.add(new JLabel("Password:"), c);
         c.gridx = 1; panel.add(passwordField, c);
         c.gridx = 0; c.gridy = 2; panel.add(loginButton, c);
-        c.gridx = 1; panel.add(registerButton, c);
+        c.gridx = 1; panel.add(cancelButton, c);
 
         add(title, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
 
+        // LOGIN
         loginButton.addActionListener(e -> {
             String user = usernameField.getText().trim();
             String pass = new String(passwordField.getPassword()).trim();
-
-            if(user.isEmpty() || pass.isEmpty()){
-                JOptionPane.showMessageDialog(this,"Inserisci username e password.","Attenzione",JOptionPane.WARNING_MESSAGE);
+            if (user.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Inserisci username e password.");
                 return;
             }
 
             String ruolo = verificaCredenziali(user, pass);
-            if(ruolo != null){
+            if (ruolo != null) {
                 dispose();
-                new HomeFrame(user, ruolo);
+                new HomeFrame(ruolo, user);
             } else {
-                JOptionPane.showMessageDialog(this,"Credenziali errate.","Errore",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Credenziali errate.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        registerButton.addActionListener(e -> new RegisterFrame());
+        cancelButton.addActionListener(e -> dispose());
 
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    private String verificaCredenziali(String username, String password){
-        String hashedInput = hashPassword(password);
-        try(BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))){
+    private String verificaCredenziali(String username, String password) {
+        String hash = hashPassword(password);
+        try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
             String line;
-            while((line=br.readLine())!=null){
-                if(line.startsWith("nome,")) continue;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("nome,")) continue;
                 String[] campi = line.split(",");
-                if(campi.length>=5){
+                if (campi.length >= 5) {
                     String user = campi[2].trim();
                     String storedHash = campi[3].trim();
                     String ruolo = campi[4].trim();
-
-                    // Debug temporaneo
-                    System.out.println("Verifico user: "+user+" , storedHash: "+storedHash+" , inputHash: "+hashedInput);
-
-                    if(user.equals(username) && storedHash.equalsIgnoreCase(hashedInput)){
+                    if (user.equals(username) && storedHash.equals(hash))
                         return ruolo;
-                    }
                 }
             }
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(this,"Errore: "+e.getMessage(),"Errore",JOptionPane.ERROR_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Errore lettura utenti.csv");
         }
         return null;
     }
 
-    private static String hashPassword(String password){
-        try{
+    private String hashPassword(String password) {
+        try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes("UTF-8"));
-            StringBuilder hexString = new StringBuilder();
-            for(byte b: hash){
-                String hex = Integer.toHexString(0xff & b);
-                if(hex.length()==1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        }catch(Exception e){
-            throw new RuntimeException("Errore hash SHA-256", e);
+            byte[] hash = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (Exception e) {
+            return password;
         }
     }
 }

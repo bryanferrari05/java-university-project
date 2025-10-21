@@ -2,106 +2,128 @@ package theknife.gui.components;
 
 import javax.swing.*;
 import java.awt.*;
-import theknife.utils.Theme;
-import theknife.utils.IconUtils;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import theknife.gui.HomeFrame;
 import theknife.gui.LoginFrame;
+import theknife.utils.Theme;
 
 public class SidebarPanel extends JPanel {
 
-    public SidebarPanel(String ruolo){
-        setLayout(new GridLayout(5,1,0,10));
-        setBackground(Theme.PRIMARY);
-        setPreferredSize(new Dimension(220,0));
-        setBorder(BorderFactory.createEmptyBorder(20,15,20,15));
+    private final HomeFrame parent;
+    private final String ruolo;
+    private JLabel selectedLabel;
 
-        add(makeButton("Cerca Ristoranti","/theknife/resources/images/icon-search.png",28, ruolo));
-        add(makeButton("I miei Preferiti","/theknife/resources/images/icon-favorites.png",28, ruolo));
+    public SidebarPanel(String ruolo, HomeFrame parent) {
+        this.ruolo = ruolo;
+        this.parent = parent;
 
-        if("ristoratore".equalsIgnoreCase(ruolo)){
-            add(makeButton("I miei Ristoranti","/theknife/resources/images/icon-restaurants.png",34, ruolo));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBackground(new Color(230, 57, 70)); // rosso brand
+        setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+
+        // 🔹 HOME sempre presente
+        addMenuItem("Home", "/images/icon-home.png");
+
+        if (ruolo.equalsIgnoreCase("ospite")) {
+            addMenuItem("Cerca Ristoranti", "/images/icon-search.png");
+            addMenuItem("Recensioni", "/images/icon-star.png");
+        } 
+        else if (ruolo.equalsIgnoreCase("cliente")) {
+            addMenuItem("Cerca Ristoranti", "/images/icon-search.png");
+            addMenuItem("I miei Preferiti", "/images/icon-favorites.png");
+            addMenuItem("Recensioni", "/images/icon-star.png");
+            addMenuItem("Logout", "/images/icon-logout.png");
+        } 
+        else if (ruolo.equalsIgnoreCase("ristoratore")) {
+            addMenuItem("Cerca Ristoranti", "/images/icon-search.png");
+            addMenuItem("I miei Ristoranti", "/images/icon-restaurants.png");
+            addMenuItem("Recensioni", "/images/icon-star.png");
+            addMenuItem("Logout", "/images/icon-logout.png");
         }
-
-        add(makeButton("Recensioni","/theknife/resources/images/icon-star.png",28, ruolo));
-
-        add(makeLogoutButton("Logout","/theknife/resources/images/icon-logout.png",28));
     }
 
-    private JButton makeButton(String text, String iconPath, int sizePx, String ruolo){
-        JButton b = new JButton(text);
-        b.setBackground(Theme.PRIMARY);
-        b.setForeground(Color.WHITE);
-        b.setFont(Theme.NORMAL_FONT);
-        b.setBorder(BorderFactory.createEmptyBorder(10,12,10,12));
-        b.setFocusPainted(false);
-        b.setHorizontalAlignment(SwingConstants.LEFT);
-        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        b.setIconTextGap(14);
+    private void addMenuItem(String text, String iconPath) {
+        JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        itemPanel.setBackground(new Color(230, 57, 70));
+        itemPanel.setMaximumSize(new Dimension(250, 50));
 
-        ImageIcon ic = IconUtils.load(iconPath, sizePx);
-        if(ic!=null) b.setIcon(IconUtils.tint(ic, Color.WHITE));
+        JLabel label = new JLabel(text);
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        label.setIcon(loadIcon(iconPath));
+        label.setIconTextGap(10);
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        b.addActionListener(e -> {
-            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(b);
-            HomeFrame home = (HomeFrame) topFrame;
+        itemPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                itemPanel.setBackground(new Color(200, 47, 60));
+            }
 
-            if(text.equals("Recensioni")){
-                if(ruolo.equalsIgnoreCase("cliente")){
-                    home.showPanel(SectionPanels.creaRecensioniCliente());
-                } else if(ruolo.equalsIgnoreCase("ristoratore")){
-                    home.showPanel(SectionPanels.creaRecensioniRistoratore());
-                } else {
-                    home.showPanel(SectionPanels.creaRecensioni());
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (label != selectedLabel)
+                    itemPanel.setBackground(new Color(230, 57, 70));
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectLabel(label, itemPanel);
+                gestisciClick(text);
+            }
+        });
+
+        itemPanel.add(label);
+        add(itemPanel);
+        add(Box.createVerticalStrut(10));
+    }
+
+    private void selectLabel(JLabel label, JPanel panel) {
+        if (selectedLabel != null) {
+            selectedLabel.getParent().setBackground(new Color(230, 57, 70));
+        }
+        selectedLabel = label;
+        panel.setBackground(new Color(180, 40, 50));
+    }
+
+    private void gestisciClick(String text) {
+        if (parent == null) return;
+
+        switch (text) {
+            case "Home" -> parent.showPanel(SectionPanels.creaHomeTopRistoranti());
+            case "Cerca Ristoranti" -> parent.showPanel(SectionPanels.creaCercaRistoranti());
+            case "I miei Preferiti" -> parent.showPanel(SectionPanels.creaMieiPreferiti());
+            case "I miei Ristoranti" -> parent.showPanel(SectionPanels.creaMieiRistoranti());
+            case "Recensioni" -> {
+                if (ruolo.equalsIgnoreCase("ristoratore"))
+                    parent.showPanel(SectionPanels.creaRecensioniRistoratore());
+                else
+                    parent.showPanel(SectionPanels.creaRecensioniCliente());
+            }
+            case "Logout" -> {
+                int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "Vuoi davvero uscire?",
+                        "Logout",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    SwingUtilities.getWindowAncestor(this).dispose();
+                    new LoginFrame();
                 }
-                return;
             }
-
-            switch(text){
-                case "Cerca Ristoranti":
-                    home.showPanel(SectionPanels.creaCercaRistoranti());
-                    break;
-                case "I miei Preferiti":
-                    home.showPanel(SectionPanels.creaMieiPreferiti());
-                    break;
-                case "I miei Ristoranti":
-                    home.showPanel(SectionPanels.creaMieiRistoranti());
-                    break;
-            }
-        });
-
-        b.addMouseListener(new java.awt.event.MouseAdapter(){
-            public void mouseEntered(java.awt.event.MouseEvent evt){ b.setBackground(Theme.ACCENT); }
-            public void mouseExited(java.awt.event.MouseEvent evt){ b.setBackground(Theme.PRIMARY); }
-        });
-
-        return b;
+        }
     }
 
-    private JButton makeLogoutButton(String text, String iconPath, int sizePx){
-        JButton b = new JButton(text);
-        b.setBackground(Theme.PRIMARY);
-        b.setForeground(Color.WHITE);
-        b.setFont(Theme.NORMAL_FONT);
-        b.setBorder(BorderFactory.createEmptyBorder(10,12,10,12));
-        b.setFocusPainted(false);
-        b.setHorizontalAlignment(SwingConstants.LEFT);
-        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        b.setIconTextGap(14);
-
-        ImageIcon ic = IconUtils.load(iconPath, sizePx);
-        if(ic!=null) b.setIcon(IconUtils.tint(ic, Color.WHITE));
-
-        b.addActionListener(e -> {
-            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(b);
-            topFrame.dispose();
-            new LoginFrame();
-        });
-
-        b.addMouseListener(new java.awt.event.MouseAdapter(){
-            public void mouseEntered(java.awt.event.MouseEvent evt){ b.setBackground(Theme.ACCENT); }
-            public void mouseExited(java.awt.event.MouseEvent evt){ b.setBackground(Theme.PRIMARY); }
-        });
-
-        return b;
+    private ImageIcon loadIcon(String path) {
+        try {
+            ImageIcon icon = new ImageIcon(getClass().getResource(path));
+            Image scaled = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaled);
+        } catch (Exception e) {
+            System.out.println("Icona non trovata: " + path);
+            return new ImageIcon();
+        }
     }
 }
