@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import theknife.gui.HomeFrame;
 import theknife.gui.LoginFrame;
+import theknife.gui.StartFrame; // 🔹 nuovo import per tornare al menu iniziale
 
 public class SidebarPanel extends JPanel {
 
@@ -24,9 +25,11 @@ public class SidebarPanel extends JPanel {
         // 🔹 HOME sempre presente
         addMenuItem("Home", "/theknife/gui/images/icon-home.png");
 
+        // 🔹 Sezioni visibili in base al ruolo
         if (ruolo.equalsIgnoreCase("ospite")) {
             addMenuItem("Cerca Ristoranti", "/theknife/gui/images/icon-search.png");
             addMenuItem("Recensioni", "/theknife/gui/images/icon-star.png");
+            addMenuItem("Torna al Menu", "/theknife/gui/images/icon-logout.png"); // 🔸 nuovo
         } 
         else if (ruolo.equalsIgnoreCase("cliente")) {
             addMenuItem("Cerca Ristoranti", "/theknife/gui/images/icon-search.png");
@@ -91,16 +94,34 @@ public class SidebarPanel extends JPanel {
 
         switch (text) {
             case "Home" -> parent.showPanel(SectionPanels.creaHomeTopRistoranti());
+
             case "Cerca Ristoranti" -> parent.showPanel(SectionPanels.creaCercaRistoranti());
+
             case "I miei Preferiti" -> parent.showPanel(SectionPanels.creaMieiPreferiti());
+
             case "I miei Ristoranti" -> parent.showPanel(SectionPanels.creaMieiRistoranti());
+
             case "Recensioni" -> {
                 if (ruolo.equalsIgnoreCase("ristoratore"))
                     parent.showPanel(SectionPanels.creaRecensioniRistoratore());
                 else
                     parent.showPanel(SectionPanels.creaRecensioniCliente());
             }
-            case "Logout" -> {
+
+            case "Torna al Menu" -> { // 🔸 per utenti guest
+                int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "Vuoi tornare al menu iniziale?",
+                        "Conferma",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    SwingUtilities.getWindowAncestor(this).dispose();
+                    new StartFrame();
+                }
+            }
+
+            case "Logout" -> { // 🔹 logout classico
                 int confirm = JOptionPane.showConfirmDialog(
                         this,
                         "Vuoi davvero uscire?",
@@ -109,7 +130,7 @@ public class SidebarPanel extends JPanel {
                 );
                 if (confirm == JOptionPane.YES_OPTION) {
                     SwingUtilities.getWindowAncestor(this).dispose();
-                    new LoginFrame();
+                    new StartFrame(); // 🔄 ora riporta al nuovo menu iniziale
                 }
             }
         }
