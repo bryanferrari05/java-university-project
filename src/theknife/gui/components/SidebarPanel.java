@@ -6,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import theknife.gui.HomeFrame;
 import theknife.gui.LoginFrame;
-import theknife.utils.Theme;
 
 public class SidebarPanel extends JPanel {
 
@@ -23,23 +22,23 @@ public class SidebarPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         // 🔹 HOME sempre presente
-        addMenuItem("Home", "/images/icon-home.png");
+        addMenuItem("Home", "/theknife/gui/images/icon-home.png");
 
         if (ruolo.equalsIgnoreCase("ospite")) {
-            addMenuItem("Cerca Ristoranti", "/images/icon-search.png");
-            addMenuItem("Recensioni", "/images/icon-star.png");
+            addMenuItem("Cerca Ristoranti", "/theknife/gui/images/icon-search.png");
+            addMenuItem("Recensioni", "/theknife/gui/images/icon-star.png");
         } 
         else if (ruolo.equalsIgnoreCase("cliente")) {
-            addMenuItem("Cerca Ristoranti", "/images/icon-search.png");
-            addMenuItem("I miei Preferiti", "/images/icon-favorites.png");
-            addMenuItem("Recensioni", "/images/icon-star.png");
-            addMenuItem("Logout", "/images/icon-logout.png");
+            addMenuItem("Cerca Ristoranti", "/theknife/gui/images/icon-search.png");
+            addMenuItem("I miei Preferiti", "/theknife/gui/images/icon-favorites.png");
+            addMenuItem("Recensioni", "/theknife/gui/images/icon-star.png");
+            addMenuItem("Logout", "/theknife/gui/images/icon-logout.png");
         } 
         else if (ruolo.equalsIgnoreCase("ristoratore")) {
-            addMenuItem("Cerca Ristoranti", "/images/icon-search.png");
-            addMenuItem("I miei Ristoranti", "/images/icon-restaurants.png");
-            addMenuItem("Recensioni", "/images/icon-star.png");
-            addMenuItem("Logout", "/images/icon-logout.png");
+            addMenuItem("Cerca Ristoranti", "/theknife/gui/images/icon-search.png");
+            addMenuItem("I miei Ristoranti", "/theknife/gui/images/icon-favorites.png");
+            addMenuItem("Recensioni", "/theknife/gui/images/icon-star.png");
+            addMenuItem("Logout", "/theknife/gui/images/icon-logout.png");
         }
     }
 
