@@ -1,10 +1,10 @@
 package theknife;
 
 import javax.swing.SwingUtilities;
-import theknife.gui.HomeFrame;
+import theknife.gui.StartFrame;
 
 public class TheKnife {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new HomeFrame("ospite", "Ospite"));
+        SwingUtilities.invokeLater(StartFrame::new);
     }
 }
