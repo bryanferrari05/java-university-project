@@ -24,7 +24,9 @@ public class SectionPanels {
                 {"Osteria del Borgo", "Roma", "Italiana", "50€", "4.9⭐"},
                 {"Sakura Sushi", "Milano", "Giapponese", "40€", "4.8⭐"},
                 {"El Gaucho", "Torino", "Argentina", "60€", "4.7⭐"},
-                {"Taverna Blu", "Napoli", "Pesce", "45€", "4.6⭐"}
+                {"Taverna Blu", "Napoli", "Pesce", "45€", "4.6⭐"},
+                {"prova1", "Genova", "Pesce", "60€", "4.8⭐"},
+                {"prova2", "Genova", "Pesce", "60€", "4.8⭐"}
         };
 
         for (String[] r : fake)
@@ -55,13 +57,13 @@ public class SectionPanels {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(8, 10, 8, 10);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0;
 
         JTextField searchField = new JTextField(15);
         JTextField cittaField = new JTextField(10);
         JTextField tipoField = new JTextField(10);
         JComboBox<String> fasciaPrezzo = new JComboBox<>(new String[]{"Qualsiasi", "<20€", "20€–50€", "50€–100€", ">100€"});
         JComboBox<String> stelleMin = new JComboBox<>(new String[]{"Qualsiasi", "≥1⭐", "≥2⭐", "≥3⭐", "≥4⭐", "5⭐"});
+
         JButton cercaBtn = new JButton("Cerca 🔍");
         cercaBtn.setBackground(new Color(230, 57, 70));
         cercaBtn.setForeground(Color.WHITE);
@@ -69,19 +71,18 @@ public class SectionPanels {
         cercaBtn.setFocusPainted(false);
 
         c.gridx = 0; c.gridy = 0; filters.add(new JLabel("Nome o parola chiave:"), c);
-        c.gridx = 1; c.weightx = 1; filters.add(searchField, c);
-        c.gridx = 2; c.weightx = 0; filters.add(new JLabel("Città:"), c);
-        c.gridx = 3; c.weightx = 1; filters.add(cittaField, c);
+        c.gridx = 1; filters.add(searchField, c);
+        c.gridx = 2; filters.add(new JLabel("Città:"), c);
+        c.gridx = 3; filters.add(cittaField, c);
 
-        c.gridx = 0; c.gridy = 1; c.weightx = 0; filters.add(new JLabel("Cucina:"), c);
-        c.gridx = 1; c.weightx = 1; filters.add(tipoField, c);
-        c.gridx = 2; c.weightx = 0; filters.add(new JLabel("Prezzo:"), c);
-        c.gridx = 3; c.weightx = 1; filters.add(fasciaPrezzo, c);
+        c.gridx = 0; c.gridy = 1; filters.add(new JLabel("Cucina:"), c);
+        c.gridx = 1; filters.add(tipoField, c);
+        c.gridx = 2; filters.add(new JLabel("Prezzo:"), c);
+        c.gridx = 3; filters.add(fasciaPrezzo, c);
 
-        c.gridx = 0; c.gridy = 2; c.weightx = 0; filters.add(new JLabel("Stelle minime:"), c);
-        c.gridx = 1; c.weightx = 1; filters.add(stelleMin, c);
-        c.gridx = 2; c.weightx = 0; filters.add(new JLabel(""), c);
-        c.gridx = 3; c.weightx = 0; filters.add(cercaBtn, c);
+        c.gridx = 0; c.gridy = 2; filters.add(new JLabel("Stelle minime:"), c);
+        c.gridx = 1; filters.add(stelleMin, c);
+        c.gridx = 3; filters.add(cercaBtn, c);
 
         panel.add(filters, BorderLayout.NORTH);
 
@@ -98,6 +99,8 @@ public class SectionPanels {
         ristorantiFake.add(new String[]{"Sushi Garden", "Torino", "Giapponese", "45€", "4.5⭐"});
         ristorantiFake.add(new String[]{"Burger Lab", "Roma", "Americana", "25€", "4.2⭐"});
         ristorantiFake.add(new String[]{"La Mer", "Genova", "Pesce", "60€", "4.8⭐"});
+        ristorantiFake.add(new String[]{"prova1", "Genova", "Pesce", "60€", "4.8⭐"});
+        ristorantiFake.add(new String[]{"prova2", "Genova", "Pesce", "60€", "4.8⭐"});
 
         for (String[] r : ristorantiFake)
             resultsPanel.add(creaCardRistorante(r[0], r[1], r[2], r[3], r[4]));
@@ -167,22 +170,22 @@ public class SectionPanels {
 
     private static JPanel creaCardRistorante(String nome, String citta, String tipo, String prezzo, String stelle) {
         JPanel card = new JPanel(new BorderLayout());
-        card.setPreferredSize(new Dimension(360, 150));
+        card.setPreferredSize(new Dimension(300, 120)); // 🔹 più piccola
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(230, 57, 70), 1),
-                BorderFactory.createEmptyBorder(10, 15, 10, 15)
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
 
         JPanel info = new JPanel(new BorderLayout());
         info.setBackground(Color.WHITE);
 
         JLabel titolo = new JLabel(nome);
-        titolo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        titolo.setFont(new Font("Segoe UI", Font.BOLD, 16));
         titolo.setForeground(new Color(51, 51, 51));
 
         JLabel desc = new JLabel(tipo + " · " + citta);
-        desc.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        desc.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         desc.setForeground(new Color(120, 120, 120));
 
         JPanel topText = new JPanel(new GridLayout(2, 1));
@@ -194,13 +197,13 @@ public class SectionPanels {
         JPanel rating = new JPanel(new BorderLayout());
         rating.setBackground(Color.WHITE);
         JLabel stelleLabel = new JLabel(stelle);
-        stelleLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        stelleLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
         stelleLabel.setForeground(new Color(230, 57, 70));
         stelleLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         rating.add(stelleLabel, BorderLayout.NORTH);
 
         JLabel prezzoLabel = new JLabel("💶 " + prezzo, SwingConstants.RIGHT);
-        prezzoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        prezzoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         prezzoLabel.setForeground(new Color(100, 100, 100));
         rating.add(prezzoLabel, BorderLayout.SOUTH);
 
