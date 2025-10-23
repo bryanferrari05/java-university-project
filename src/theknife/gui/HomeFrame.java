@@ -13,28 +13,28 @@ public class HomeFrame extends JFrame {
     private final String username;
     private final JPanel mainPanel;
     private final SidebarPanel sidebar;
-    private boolean sidebarVisible = false; // CHIUSA all’avvio
+    private boolean sidebarVisible = false;
 
     public HomeFrame(String ruolo, String username) {
         this.ruolo = ruolo;
         this.username = username;
 
-        setTitle("TheKnife - Home");
+        setTitle("TheKnife");
         setSize(950, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Navbar con callback toggle
+        // Inietta contesto sessione nei SectionPanels (serve per pulsanti/permessi)
+        SectionPanels.setSession(ruolo, username, this::showPanel);
+
         NavbarPanel navbar = new NavbarPanel(username, this, ruolo, this::toggleSidebar);
         add(navbar, BorderLayout.NORTH);
 
-        // Sidebar (chiusa all'avvio)
         sidebar = new SidebarPanel(ruolo, this);
         sidebar.setPreferredSize(new Dimension(0, getHeight()));
         sidebar.setVisible(false);
         add(sidebar, BorderLayout.WEST);
 
-        // Area principale
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
         showPanel(SectionPanels.creaHomeTopRistoranti());
@@ -44,7 +44,6 @@ public class HomeFrame extends JFrame {
         setVisible(true);
     }
 
-    /** Cambia il pannello principale */
     public void showPanel(JPanel panel) {
         mainPanel.removeAll();
         mainPanel.add(panel, BorderLayout.CENTER);
@@ -52,7 +51,6 @@ public class HomeFrame extends JFrame {
         mainPanel.repaint();
     }
 
-    /** Apre o chiude la sidebar con animazione */
     private void toggleSidebar() {
         sidebarVisible = !sidebarVisible;
         sidebar.setVisible(true);
