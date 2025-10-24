@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import theknife.gui.HomeFrame;
-import theknife.gui.LoginFrame;
 import theknife.gui.StartFrame; // 🔹 nuovo import per tornare al menu iniziale
 
 public class SidebarPanel extends JPanel {

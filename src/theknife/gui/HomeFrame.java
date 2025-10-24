@@ -7,6 +7,7 @@ import theknife.gui.components.NavbarPanel;
 import theknife.gui.components.SidebarPanel;
 import theknife.gui.components.SectionPanels;
 
+@SuppressWarnings("unused")
 public class HomeFrame extends JFrame {
 
     private final String ruolo;

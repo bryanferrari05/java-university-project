@@ -7,6 +7,7 @@ import theknife.gui.RegisterFrame;
 import theknife.utils.Theme;
 import theknife.gui.HomeFrame;
 
+@SuppressWarnings("unused")
 public class NavbarPanel extends JPanel {
 
     private final String username;
