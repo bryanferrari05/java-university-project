@@ -28,7 +28,6 @@ public class SidebarPanel extends JPanel {
         // 🔹 Sezioni visibili in base al ruolo
         if (ruolo.equalsIgnoreCase("ospite")) {
             addMenuItem("Cerca Ristoranti", "/theknife/gui/images/icon-search.png");
-            addMenuItem("Recensioni", "/theknife/gui/images/icon-star.png");
             addMenuItem("Torna al Menu", "/theknife/gui/images/icon-logout.png"); // 🔸 nuovo
         } 
         else if (ruolo.equalsIgnoreCase("cliente")) {
