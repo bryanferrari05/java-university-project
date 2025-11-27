@@ -30,20 +30,21 @@ public class LoginFrame extends JFrame {
 
         JTextField usernameField = new JTextField(15);
         JPasswordField passwordField = new JPasswordField(15);
-        JButton loginButton = Theme.styledButton("Accedi");
         JButton cancelButton = Theme.styledButton("Annulla");
+        JButton loginButton = Theme.styledButton("Accedi");
 
         c.gridx = 0; c.gridy = 0; panel.add(new JLabel("Username:"), c);
         c.gridx = 1; panel.add(usernameField, c);
         c.gridx = 0; c.gridy = 1; panel.add(new JLabel("Password:"), c);
         c.gridx = 1; panel.add(passwordField, c);
-        c.gridx = 0; c.gridy = 2; panel.add(loginButton, c);
-        c.gridx = 1; panel.add(cancelButton, c);
+        c.gridx = 0; c.gridy = 2; panel.add(cancelButton, c);
+        c.gridx = 1; panel.add(loginButton, c);
 
         add(title, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
 
-        // LOGIN
+        cancelButton.addActionListener(e -> dispose());
+
         loginButton.addActionListener(e -> {
             String user = usernameField.getText().trim();
             String pass = new String(passwordField.getPassword()).trim();
@@ -60,8 +61,6 @@ public class LoginFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Credenziali errate.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
-
-        cancelButton.addActionListener(e -> dispose());
 
         setLocationRelativeTo(null);
         setVisible(true);
