@@ -1,12 +1,16 @@
 package theknife.gui.components;
 
-import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
+import javax.swing.*;
 import theknife.controller.GestioneRecensioni;
 import theknife.model.Recensione;
+import theknife.model.Ristorante;
+
 
 @SuppressWarnings("unused")
 public class SectionPanels {
@@ -135,55 +139,59 @@ public class SectionPanels {
             return;
         }
 
-        java.util.List<theknife.controller.GestioneRistoranti.Ristorante> tutti = theknife.controller.GestioneRistoranti.getRistorantiProprietario("admin");
-        java.util.List<theknife.controller.GestioneRistoranti.Ristorante> risultati = new java.util.ArrayList<>();
+        List<Ristorante> tutti = getRistoranti();
+        List<Ristorante> risultati = new ArrayList<>();
 
-        for (theknife.controller.GestioneRistoranti.Ristorante r : tutti) {
-            boolean ok = true;
-            if (!r.getCitta().toLowerCase().contains(citta)) ok = false;
-            if (!nome.isEmpty() && !r.getNome().toLowerCase().contains(nome)) ok = false;
-            if (!tipo.isEmpty() && !r.getTipoCucina().toLowerCase().contains(tipo)) ok = false;
-            if (delivery && !r.isDelivery()) ok = false;
-            if (prenota && !r.isPrenotazione()) ok = false;
-            if (!fascia.equals("Qualsiasi") && !r.getFasciaPrezzo().equals(fascia)) ok = false;
-            if (ok) risultati.add(r);
-        }
+
+        for (Ristorante r : tutti) {
+    boolean ok = true;
+    if (!r.getCitta().toLowerCase().contains(citta)) ok = false;
+    if (!nome.isEmpty() && !r.getNome().toLowerCase().contains(nome)) ok = false;
+    if (!tipo.isEmpty() && !r.getTipoCucina().toLowerCase().contains(tipo)) ok = false;
+    if (delivery && !r.isDelivery()) ok = false;
+    if (prenota && !r.isPrenotazione()) ok = false;
+    if (!fascia.equals("Qualsiasi") && !r.getFasciaPrezzo().equalsIgnoreCase(fascia)) ok = false;
+
+    if (ok) risultati.add(r);
+}
+
 
         if (risultati.isEmpty()) {
             JLabel no = new JLabel("Nessun ristorante trovato.", SwingConstants.CENTER);
             no.setAlignmentX(Component.CENTER_ALIGNMENT);
             resultsPanel.add(no);
         } else {
-            for (theknife.controller.GestioneRistoranti.Ristorante r : risultati) {
-                JPanel card = new JPanel(new BorderLayout());
-                card.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(new Color(230, 57, 70), 1),
-                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
-                ));
-                card.setBackground(Color.WHITE);
+            for (Ristorante r : risultati) {
+    JPanel card = new JPanel(new BorderLayout());
+    card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(230, 57, 70), 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)
+    ));
+    card.setBackground(Color.WHITE);
 
-                JLabel nomeL = new JLabel(r.getNome());
-                nomeL.setFont(new Font("Segoe UI", Font.BOLD, 15));
-                JLabel infoL = new JLabel(r.getCitta() + " • " + r.getTipoCucina() + " • " + r.getFasciaPrezzo());
-                infoL.setForeground(new Color(90, 90, 90));
+    JLabel nomeL = new JLabel(r.getNome());
+    nomeL.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    JLabel infoL = new JLabel(r.getCitta() + " • " + r.getTipoCucina() + " • " + r.getFasciaPrezzo());
+    infoL.setForeground(new Color(90, 90, 90));
 
-                JPanel text = new JPanel();
-                text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
-                text.setBackground(Color.WHITE);
-                text.add(nomeL);
-                text.add(infoL);
+    JPanel text = new JPanel();
+    text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
+    text.setBackground(Color.WHITE);
+    text.add(nomeL);
+    text.add(infoL);
 
-                card.add(text, BorderLayout.CENTER);
+    card.add(text, BorderLayout.CENTER);
 
-                JButton vediBtn = new JButton("Visualizza dettagli");
-                vediBtn.addActionListener(ev -> {
-                    JOptionPane.showMessageDialog(panel, "Scheda: " + r.getNome(), "Dettagli", JOptionPane.INFORMATION_MESSAGE);
-                });
-                card.add(vediBtn, BorderLayout.EAST);
+    JButton vediBtn = new JButton("Visualizza dettagli");
+    vediBtn.addActionListener(ev -> {
+        JOptionPane.showMessageDialog(panel, "Scheda: " + r.getNome(), "Dettagli", JOptionPane.INFORMATION_MESSAGE);
+    });
+    card.add(vediBtn, BorderLayout.EAST);
 
-                resultsPanel.add(card);
-                resultsPanel.add(Box.createVerticalStrut(10));
-            }
+    resultsPanel.add(card);
+    resultsPanel.add(Box.createVerticalStrut(10));
+}
+
         }
 
         resultsPanel.revalidate();
@@ -192,6 +200,36 @@ public class SectionPanels {
 
     return panel;
 }
+
+public static List<Ristorante> getRistoranti() {
+
+    List<Ristorante> lista = new ArrayList<>();
+
+    try (BufferedReader br = new BufferedReader(new FileReader("data/ristoranti.csv"))) {
+        String line;
+        br.readLine(); // SALTA HEADER
+
+        while ((line = br.readLine()) != null) {
+            String[] c = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+
+            String nome   = c[0].replace("\"", "").trim();
+            String citta  = c[2].replace("\"", "").trim();
+            String tipo   = c[3].replace("\"", "").trim();
+            String prezzo = c[4].replace("\"", "").trim();
+
+            boolean delivery = c.length > 10 && c[10].toLowerCase().contains("delivery");
+            boolean prenota  = c.length > 10 && c[10].toLowerCase().contains("reservation");
+
+            lista.add(new Ristorante(nome, citta, tipo, prezzo, delivery, prenota));
+        }
+
+    } catch (Exception e) {
+        System.out.println("❌ Errore lettura CSV: "+e.getMessage());
+    }
+
+    return lista;
+}
+
 
     public static JPanel creaMieiPreferiti() {
         JPanel panel = new JPanel(new BorderLayout());
