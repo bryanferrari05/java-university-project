@@ -1,11 +1,11 @@
 package theknife.gui.components;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
+import theknife.gui.HomeFrame;
 import theknife.gui.LoginFrame;
 import theknife.gui.RegisterFrame;
 import theknife.utils.Theme;
-import theknife.gui.HomeFrame;
 
 @SuppressWarnings("unused")
 public class NavbarPanel extends JPanel {

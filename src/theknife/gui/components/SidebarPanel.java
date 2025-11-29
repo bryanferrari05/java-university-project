@@ -1,9 +1,9 @@
 package theknife.gui.components;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
 import theknife.gui.HomeFrame;
 import theknife.gui.StartFrame;
 
