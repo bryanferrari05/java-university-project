@@ -38,18 +38,17 @@ public class SectionPanels {
         JPanel content = new JPanel(new GridLayout(0, 2, 20, 20));
         content.setBackground(Color.WHITE);
 
-        String[][] fake = {
-                {"Osteria del Borgo", "Roma", "Italiana", "50€", "4.9⭐"},
-                {"Sakura Sushi", "Milano", "Giapponese", "40€", "4.8⭐"},
-                {"El Gaucho", "Torino", "Argentina", "60€", "4.7⭐"},
-                {"Taverna Blu", "Napoli", "Pesce", "45€", "4.6⭐"},
-                {"prova1", "Genova", "Pesce", "60€", "4.8⭐"},
-                {"prova2", "Genova", "Pesce", "60€", "4.8⭐"}
-        };
-
-        for (String[] r : fake) {
-            content.add(creaCardRistorante(r[0], r[1], r[2], r[3], r[4]));
-        }
+        List<Ristorante> tuttiRistoranti = getRistoranti();
+        
+        tuttiRistoranti.stream()
+            .filter(r -> r.getAward() != null && (r.getAward().contains("1 Star") || r.getAward().contains("2 Stars") || r.getAward().contains("3 Stars")))
+            .sorted((r1, r2) -> {
+                int stelle1 = Integer.parseInt(r1.getAward().substring(0, 1));
+                int stelle2 = Integer.parseInt(r2.getAward().substring(0, 1));
+                return Integer.compare(stelle2, stelle1);
+            })
+            .limit(6)
+            .forEach(r -> content.add(creaCardRistorante(r.getNome(), r.getCitta(), r.getTipoCucina(), r.getFasciaPrezzo(), r.getAward())));
 
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
@@ -212,19 +211,24 @@ public static List<Ristorante> getRistoranti() {
         while ((line = br.readLine()) != null) {
             String[] c = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
+            if (c.length < 13) continue; // Salta le righe malformattate
+
             String nome   = c[0].replace("\"", "").trim();
             String citta  = c[2].replace("\"", "").trim();
-            String tipo   = c[3].replace("\"", "").trim();
-            String prezzo = c[4].replace("\"", "").trim();
+            String prezzo = c[3].replace("\"", "").trim();
+            String tipo   = c[4].replace("\"", "").trim();
+            String award  = c[10].replace("\"", "").trim();
+            String facilities = c[12].replace("\"", "").toLowerCase();
 
-            boolean delivery = c.length > 10 && c[10].toLowerCase().contains("delivery");
-            boolean prenota  = c.length > 10 && c[10].toLowerCase().contains("reservation");
+            boolean delivery = facilities.contains("delivery");
+            boolean prenota  = facilities.contains("reservations");
 
-            lista.add(new Ristorante(nome, citta, tipo, prezzo, delivery, prenota));
+            lista.add(new Ristorante(nome, citta, tipo, prezzo, delivery, prenota, award));
         }
 
     } catch (Exception e) {
         System.out.println("❌ Errore lettura CSV: "+e.getMessage());
+        e.printStackTrace();
     }
 
     return lista;
