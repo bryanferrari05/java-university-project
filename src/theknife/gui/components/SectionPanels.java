@@ -11,7 +11,6 @@ import theknife.controller.GestioneRecensioni;
 import theknife.model.Recensione;
 import theknife.model.Ristorante;
 
-
 @SuppressWarnings("unused")
 public class SectionPanels {
 
@@ -39,7 +38,7 @@ public class SectionPanels {
         content.setBackground(Color.WHITE);
 
         List<Ristorante> tuttiRistoranti = getRistoranti();
-        
+
         tuttiRistoranti.stream()
             .filter(r -> r.getAward() != null && (r.getAward().contains("1 Star") || r.getAward().contains("2 Stars") || r.getAward().contains("3 Stars")))
             .sorted((r1, r2) -> {
@@ -59,175 +58,179 @@ public class SectionPanels {
     }
 
     public static JPanel creaCercaRistoranti() {
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.setBackground(Color.WHITE);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
 
-    JLabel title = new JLabel("🔍 Cerca Ristoranti", SwingConstants.CENTER);
-    title.setFont(new Font("Segoe UI", Font.BOLD, 26));
-    title.setForeground(new Color(230, 57, 70));
-    title.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
-    panel.add(title, BorderLayout.NORTH);
+        JLabel title = new JLabel("🔍 Cerca Ristoranti", SwingConstants.CENTER);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setForeground(new Color(230, 57, 70));
+        title.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+        panel.add(title, BorderLayout.NORTH);
 
-    JPanel filters = new JPanel(new GridBagLayout());
-    filters.setBackground(Color.WHITE);
-    filters.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+        JPanel filters = new JPanel(new GridBagLayout());
+        filters.setBackground(Color.WHITE);
+        filters.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
 
-    GridBagConstraints c = new GridBagConstraints();
-    c.insets = new Insets(6, 8, 6, 8);
-    c.fill = GridBagConstraints.HORIZONTAL;
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(6, 8, 6, 8);
+        c.fill = GridBagConstraints.HORIZONTAL;
 
-    JTextField nomeField = new JTextField(12);
-    JTextField cittaField = new JTextField(10);
-    JTextField tipoField = new JTextField(10);
-    JComboBox<String> fasciaBox = new JComboBox<>(new String[]{"Qualsiasi", "<30€", "30€-50€", "50€-100€", ">100€"});
-    JComboBox<String> stelleBox = new JComboBox<>(new String[]{"Qualsiasi", "≥1⭐", "≥2⭐", "≥3⭐", "≥4⭐", "5⭐"});
-    JCheckBox deliveryBox = new JCheckBox("Delivery disponibile");
-    JCheckBox prenotaBox = new JCheckBox("Prenotazione online");
-    JTextField distanzaField = new JTextField("10", 5);
+        JTextField nomeField = new JTextField(12);
+        JTextField cittaField = new JTextField(10);
+        JTextField tipoField = new JTextField(10);
+        JComboBox<String> fasciaBox = new JComboBox<>(new String[]{"Qualsiasi", "<30€", "30€-50€", "50€-100€", ">100€"});
+        JComboBox<String> stelleBox = new JComboBox<>(new String[]{"Qualsiasi", "≥1⭐", "≥2⭐", "≥3⭐", "≥4⭐", "5⭐"});
+        JCheckBox deliveryBox = new JCheckBox("Delivery disponibile");
+        JCheckBox prenotaBox = new JCheckBox("Prenotazione online");
+        JTextField distanzaField = new JTextField("10", 5);
 
-    c.gridx = 0; c.gridy = 0; filters.add(new JLabel("Nome:"), c);
-    c.gridx = 1; filters.add(nomeField, c);
-    c.gridx = 2; filters.add(new JLabel("Tipo cucina:"), c);
-    c.gridx = 3; filters.add(tipoField, c);
+        c.gridx = 0; c.gridy = 0; filters.add(new JLabel("Nome:"), c);
+        c.gridx = 1; filters.add(nomeField, c);
+        c.gridx = 2; filters.add(new JLabel("Tipo cucina:"), c);
+        c.gridx = 3; filters.add(tipoField, c);
 
-    c.gridx = 0; c.gridy = 1; filters.add(new JLabel("Città*:"), c);
-    c.gridx = 1; filters.add(cittaField, c);
-    c.gridx = 2; filters.add(new JLabel("Fascia di prezzo:"), c);
-    c.gridx = 3; filters.add(fasciaBox, c);
+        c.gridx = 0; c.gridy = 1; filters.add(new JLabel("Città*:"), c);
+        c.gridx = 1; filters.add(cittaField, c);
+        c.gridx = 2; filters.add(new JLabel("Fascia di prezzo:"), c);
+        c.gridx = 3; filters.add(fasciaBox, c);
 
-    c.gridx = 0; c.gridy = 2; filters.add(new JLabel("Stelle minime:"), c);
-    c.gridx = 1; filters.add(stelleBox, c);
-    c.gridx = 2; filters.add(new JLabel("Raggio (km):"), c);
-    c.gridx = 3; filters.add(distanzaField, c);
+        c.gridx = 0; c.gridy = 2; filters.add(new JLabel("Stelle minime:"), c);
+        c.gridx = 1; filters.add(stelleBox, c);
+        c.gridx = 2; filters.add(new JLabel("Raggio (km):"), c);
+        c.gridx = 3; filters.add(distanzaField, c);
 
-    c.gridx = 0; c.gridy = 3; filters.add(deliveryBox, c);
-    c.gridx = 1; filters.add(prenotaBox, c);
+        c.gridx = 0; c.gridy = 3; filters.add(deliveryBox, c);
+        c.gridx = 1; filters.add(prenotaBox, c);
 
-    JButton cercaBtn = new JButton("Cerca");
-    cercaBtn.setBackground(new Color(230, 57, 70));
-    cercaBtn.setForeground(Color.WHITE);
-    cercaBtn.setFocusPainted(false);
-    c.gridx = 3; c.gridy = 3; filters.add(cercaBtn, c);
+        JButton cercaBtn = new JButton("Cerca");
+        cercaBtn.setBackground(new Color(230, 57, 70));
+        cercaBtn.setForeground(Color.WHITE);
+        cercaBtn.setFocusPainted(false);
+        c.gridx = 3; c.gridy = 3; filters.add(cercaBtn, c);
 
-    panel.add(filters, BorderLayout.NORTH);
+        panel.add(filters, BorderLayout.NORTH);
 
-    JPanel resultsPanel = new JPanel();
-    resultsPanel.setBackground(Color.WHITE);
-    resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
+        JPanel resultsPanel = new JPanel();
+        resultsPanel.setBackground(Color.WHITE);
+        resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
 
-    JScrollPane scroll = new JScrollPane(resultsPanel);
-    scroll.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
-    scroll.getVerticalScrollBar().setUnitIncrement(16);
-    panel.add(scroll, BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(resultsPanel);
+        scroll.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        panel.add(scroll, BorderLayout.CENTER);
 
-    cercaBtn.addActionListener(e -> {
-        resultsPanel.removeAll();
+        cercaBtn.addActionListener(e -> {
+            resultsPanel.removeAll();
 
-        String nome = nomeField.getText().trim().toLowerCase();
-        String citta = cittaField.getText().trim().toLowerCase();
-        String tipo = tipoField.getText().trim().toLowerCase();
-        String fascia = (String) fasciaBox.getSelectedItem();
-        String stelleSel = (String) stelleBox.getSelectedItem();
-        boolean delivery = deliveryBox.isSelected();
-        boolean prenota = prenotaBox.isSelected();
-        int distanzaMax;
-        try { distanzaMax = Integer.parseInt(distanzaField.getText().trim()); } catch (Exception ex) { distanzaMax = 10; }
+            String nome = nomeField.getText().trim().toLowerCase();
+            String citta = cittaField.getText().trim().toLowerCase();
+            String tipo = tipoField.getText().trim().toLowerCase();
+            String fascia = (String) fasciaBox.getSelectedItem();
+            String stelleSel = (String) stelleBox.getSelectedItem();
+            boolean delivery = deliveryBox.isSelected();
+            boolean prenota = prenotaBox.isSelected();
+            int distanzaMax;
+            try { distanzaMax = Integer.parseInt(distanzaField.getText().trim()); } catch (Exception ex) { distanzaMax = 10; }
 
-        if (citta.isEmpty()) {
-            JOptionPane.showMessageDialog(panel, "Inserisci almeno la città per effettuare la ricerca.", "Errore", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+            if (citta.isEmpty()) {
+                JOptionPane.showMessageDialog(panel, "Inserisci almeno la città per effettuare la ricerca.", "Errore", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-        List<Ristorante> tutti = getRistoranti();
-        List<Ristorante> risultati = new ArrayList<>();
+            List<Ristorante> tutti = getRistoranti();
+            List<Ristorante> risultati = new ArrayList<>();
 
+            for (Ristorante r : tutti) {
+                boolean ok = true;
+                if (!r.getCitta().toLowerCase().contains(citta)) ok = false;
+                if (!nome.isEmpty() && !r.getNome().toLowerCase().contains(nome)) ok = false;
+                if (!tipo.isEmpty() && !r.getTipoCucina().toLowerCase().contains(tipo)) ok = false;
+                if (delivery && !r.isDelivery()) ok = false;
+                if (prenota && !r.isPrenotazione()) ok = false;
+                if (!fascia.equals("Qualsiasi") && !r.getFasciaPrezzo().equalsIgnoreCase(fascia)) ok = false;
 
-        for (Ristorante r : tutti) {
-    boolean ok = true;
-    if (!r.getCitta().toLowerCase().contains(citta)) ok = false;
-    if (!nome.isEmpty() && !r.getNome().toLowerCase().contains(nome)) ok = false;
-    if (!tipo.isEmpty() && !r.getTipoCucina().toLowerCase().contains(tipo)) ok = false;
-    if (delivery && !r.isDelivery()) ok = false;
-    if (prenota && !r.isPrenotazione()) ok = false;
-    if (!fascia.equals("Qualsiasi") && !r.getFasciaPrezzo().equalsIgnoreCase(fascia)) ok = false;
+                if (ok) risultati.add(r);
+            }
 
-    if (ok) risultati.add(r);
-}
+            if (risultati.isEmpty()) {
+                JLabel no = new JLabel("Nessun ristorante trovato.", SwingConstants.CENTER);
+                no.setAlignmentX(Component.CENTER_ALIGNMENT);
+                resultsPanel.add(no);
+            } else {
+                for (Ristorante r : risultati) {
+                    JPanel card = new JPanel(new BorderLayout());
+                    card.setBorder(BorderFactory.createCompoundBorder(
+                            BorderFactory.createLineBorder(new Color(230, 57, 70), 1),
+                            BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                    ));
+                    card.setBackground(Color.WHITE);
 
+                    JLabel nomeL = new JLabel(r.getNome());
+                    nomeL.setFont(new Font("Segoe UI", Font.BOLD, 15));
+                    JLabel infoL = new JLabel(r.getCitta() + " • " + r.getTipoCucina() + " • " + r.getFasciaPrezzo());
+                    infoL.setForeground(new Color(90, 90, 90));
 
-        if (risultati.isEmpty()) {
-            JLabel no = new JLabel("Nessun ristorante trovato.", SwingConstants.CENTER);
-            no.setAlignmentX(Component.CENTER_ALIGNMENT);
-            resultsPanel.add(no);
-        } else {
-            for (Ristorante r : risultati) {
-    JPanel card = new JPanel(new BorderLayout());
-    card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(230, 57, 70), 1),
-            BorderFactory.createEmptyBorder(8, 12, 8, 12)
-    ));
-    card.setBackground(Color.WHITE);
+                    JPanel text = new JPanel();
+                    text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
+                    text.setBackground(Color.WHITE);
+                    text.add(nomeL);
+                    text.add(infoL);
 
-    JLabel nomeL = new JLabel(r.getNome());
-    nomeL.setFont(new Font("Segoe UI", Font.BOLD, 15));
-    JLabel infoL = new JLabel(r.getCitta() + " • " + r.getTipoCucina() + " • " + r.getFasciaPrezzo());
-    infoL.setForeground(new Color(90, 90, 90));
+                    card.add(text, BorderLayout.CENTER);
 
-    JPanel text = new JPanel();
-    text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
-    text.setBackground(Color.WHITE);
-    text.add(nomeL);
-    text.add(infoL);
+                    JButton vediBtn = new JButton("Visualizza dettagli");
+                    vediBtn.addActionListener(ev -> {
+                        new theknife.gui.components.RestaurantDetailsFrame(r);
+                    });
 
-    card.add(text, BorderLayout.CENTER);
+                    card.add(vediBtn, BorderLayout.EAST);
 
-    JButton vediBtn = new JButton("Visualizza dettagli");
-    vediBtn.addActionListener(ev -> {
-        JOptionPane.showMessageDialog(panel, "Scheda: " + r.getNome(), "Dettagli", JOptionPane.INFORMATION_MESSAGE);
-    });
-    card.add(vediBtn, BorderLayout.EAST);
+                    resultsPanel.add(card);
+                    resultsPanel.add(Box.createVerticalStrut(10));
+                }
+            }
 
-    resultsPanel.add(card);
-    resultsPanel.add(Box.createVerticalStrut(10));
-}
+            resultsPanel.revalidate();
+            resultsPanel.repaint();
+        });
 
-        }
+        return panel;
+    }
 
-        resultsPanel.revalidate();
-        resultsPanel.repaint();
-    });
-
-    return panel;
-}
-
-public static List<Ristorante> getRistoranti() {
+    public static List<Ristorante> getRistoranti() {
 
     List<Ristorante> lista = new ArrayList<>();
 
     try (BufferedReader br = new BufferedReader(new FileReader("data/ristoranti.csv"))) {
         String line;
-        br.readLine(); // SALTA HEADER
+        br.readLine(); // salta header
 
         while ((line = br.readLine()) != null) {
             String[] c = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
-            if (c.length < 13) continue; // Salta le righe malformattate
+            if (c.length < 14) continue;
 
             String nome   = c[0].replace("\"", "").trim();
-            String citta  = c[2].replace("\"", "").trim();
-            String prezzo = c[3].replace("\"", "").trim();
-            String tipo   = c[4].replace("\"", "").trim();
-            String award  = c[10].replace("\"", "").trim();
-            String facilities = c[12].replace("\"", "").toLowerCase();
+            String address = c[1].replace("\"", "").trim();
+            String location = c[2].replace("\"", "").trim();
+            String price = c[3].replace("\"", "").trim();
+            String cuisine = c[4].replace("\"", "").trim();
+            double longitude = Double.parseDouble(c[5]);
+            double latitude  = Double.parseDouble(c[6]);
+            String phone     = c[7].replace("\"", "").trim();
+            String url       = c[8].replace("\"", "").trim();
+            String website   = c[9].replace("\"", "").trim();
+            String award     = c[10].replace("\"", "").trim();
+            String greenStar = c[11].replace("\"", "").trim();
+            String facilities = c[12].replace("\"", "").trim();
+            String description = c[13].replace("\"", "").trim();
 
-            boolean delivery = facilities.contains("delivery");
-            boolean prenota  = facilities.contains("reservations");
-
-            lista.add(new Ristorante(nome, citta, tipo, prezzo, delivery, prenota, award));
+            lista.add(new Ristorante(nome, address, location, price, cuisine,
+                    longitude, latitude, phone, url, website,
+                    award, greenStar, facilities, description));
         }
 
     } catch (Exception e) {
-        System.out.println("❌ Errore lettura CSV: "+e.getMessage());
         e.printStackTrace();
     }
 
