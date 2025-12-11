@@ -32,15 +32,14 @@ public class RegisterFrame extends JFrame {
         add(passwordField);
 
         add(new JLabel("Ruolo:"));
-        String[] ruoli = {"cliente", "ristoratore"}; // minuscolo per coerenza col CSV
+        String[] ruoli = {"cliente", "ristoratore"};
         JComboBox<String> ruoloBox = new JComboBox<>(ruoli);
         add(ruoloBox);
 
         JButton confermaButton = new JButton("Conferma registrazione");
         add(confermaButton);
-        add(new JLabel()); // spazio vuoto per allineamento
+        add(new JLabel());
 
-        // 🎯 Listener del bottone di conferma
         confermaButton.addActionListener(e -> {
             String nome = nomeField.getText().trim();
             String cognome = cognomeField.getText().trim();
@@ -48,24 +47,21 @@ public class RegisterFrame extends JFrame {
             String password = new String(passwordField.getPassword()).trim();
             String ruolo = (String) ruoloBox.getSelectedItem();
 
-            // Controllo campi vuoti
             if (nome.isEmpty() || cognome.isEmpty() || username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Compila tutti i campi!", "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Controlla se username già esiste
             if (usernameEsistente(username)) {
                 JOptionPane.showMessageDialog(this, "Username già registrato!", "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Registra nel CSV (con password hashata)
             if (salvaUtente(nome, cognome, username, password, ruolo)) {
-                JOptionPane.showMessageDialog(this, "Registrazione completata!\nOra puoi effettuare il login.", 
+                JOptionPane.showMessageDialog(this, "Registrazione completata!\nOra puoi effettuare il login.",
                         "Successo", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
-                new LoginFrame(); // riapre automaticamente la finestra di login
+                new LoginFrame();
             } else {
                 JOptionPane.showMessageDialog(this, "Errore nel salvataggio dei dati.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
@@ -80,12 +76,11 @@ public class RegisterFrame extends JFrame {
 
     }
 
-    // 🔍 Controlla se username è già presente nel CSV
     private boolean usernameEsistente(String username) {
         try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("nome,")) continue; // salta intestazione
+                if (line.startsWith("nome,")) continue;
                 String[] campi = line.split(",");
                 if (campi.length >= 3 && campi[2].trim().equalsIgnoreCase(username)) {
                     return true;
@@ -97,19 +92,21 @@ public class RegisterFrame extends JFrame {
         return false;
     }
 
-    // ✍️ Aggiunge una nuova riga al CSV con la password cifrata
     private boolean salvaUtente(String nome, String cognome, String username, String password, String ruolo) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(PATH_UTENTI, true))) {
-            String hashedPassword = hashPassword(password); // <-- cifratura qui
-            bw.write(String.format("%s,%s,%s,%s,%s%n", nome, cognome, username, hashedPassword, ruolo));
+            String hashedPassword = hashPassword(password);
+
+            // ⭐ AGGIUNTA COLONNA PREFERITI VUOTA ("")
+            bw.write(String.format("%s,%s,%s,%s,%s,%s%n",
+                    nome, cognome, username, hashedPassword, ruolo, ""));
             return true;
+
         } catch (IOException e) {
             System.err.println("Errore nella scrittura del file utenti.csv: " + e.getMessage());
             return false;
         }
     }
 
-    // 🔐 Metodo per creare l'hash SHA-256 della password
     private static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

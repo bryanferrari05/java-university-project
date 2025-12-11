@@ -6,26 +6,33 @@ import java.awt.*;
 import theknife.gui.components.NavbarPanel;
 import theknife.gui.components.SidebarPanel;
 import theknife.gui.components.SectionPanels;
+import theknife.model.User;
 
 @SuppressWarnings("unused")
 public class HomeFrame extends JFrame {
 
     private final String ruolo;
     private final String username;
+    private final User user;
+
     private final JPanel mainPanel;
     private final SidebarPanel sidebar;
     private boolean sidebarVisible = false;
 
-    public HomeFrame(String ruolo, String username) {
-        this.ruolo = ruolo;
-        this.username = username;
+    // ⭐ NUOVO COSTRUTTORE: riceve l'oggetto User completo
+    public HomeFrame(User user) {
+
+        this.user = user;                // ⭐ Manteniamo l’utente completo
+        this.ruolo = user.getRuolo();    // estraiamo ruolo
+        this.username = user.getUsername(); // estraiamo username
 
         setTitle("TheKnife");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Inietta contesto sessione nei SectionPanels (serve per pulsanti/permessi)
-        SectionPanels.setSession(ruolo, username, this::showPanel);
+        // ⭐ PASSIAMO ruolo e username come prima → nessun altro codice da modificare
+        SectionPanels.setSession(this.user, this::showPanel);
+
 
         NavbarPanel navbar = new NavbarPanel(username, this, ruolo, this::toggleSidebar);
         add(navbar, BorderLayout.NORTH);
@@ -46,12 +53,11 @@ public class HomeFrame extends JFrame {
         int maxWidth = (int) (screen.width * 0.9);
         int maxHeight = (int) (screen.height * 0.9);
 
-        setMinimumSize(new Dimension(900, 550));          // indicativo
+        setMinimumSize(new Dimension(900, 550));
         setPreferredSize(new Dimension(maxWidth, maxHeight));
 
         pack();
         setLocationRelativeTo(null);
-
     }
 
     public void showPanel(JPanel panel) {
@@ -78,5 +84,10 @@ public class HomeFrame extends JFrame {
             }
         });
         timer.start();
+    }
+
+    // ⭐ Getter per l’utente (ti servirà dopo nella GUI Preferiti)
+    public User getUser() {
+        return user;
     }
 }

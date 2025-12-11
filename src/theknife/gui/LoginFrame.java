@@ -4,6 +4,8 @@ import java.awt.*;
 import java.io.*;
 import java.security.MessageDigest;
 import javax.swing.*;
+
+import theknife.model.User;
 import theknife.utils.Theme;
 
 public class LoginFrame extends JFrame {
@@ -45,17 +47,19 @@ public class LoginFrame extends JFrame {
         cancelButton.addActionListener(e -> dispose());
 
         loginButton.addActionListener(e -> {
-            String user = usernameField.getText().trim();
-            String pass = new String(passwordField.getPassword()).trim();
-            if (user.isEmpty() || pass.isEmpty()) {
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
+
+            if (username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Inserisci username e password.");
                 return;
             }
 
-            String ruolo = verificaCredenziali(user, pass);
-            if (ruolo != null) {
+            User user = verificaCredenziali(username, password);
+
+            if (user != null) {
                 dispose();
-                new HomeFrame(ruolo, user);
+                new HomeFrame(user); // ⭐ PASSIAMO L'UTENTE COMPLETO
             } else {
                 JOptionPane.showMessageDialog(this, "Credenziali errate.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
@@ -65,29 +69,57 @@ public class LoginFrame extends JFrame {
         setVisible(true);
 
         pack();
-        setMinimumSize(new Dimension(420, 350)); // se vuoi mantenerla più o meno così
+        setMinimumSize(new Dimension(420, 350));
         setLocationRelativeTo(null);
-
     }
 
-    private String verificaCredenziali(String username, String password) {
+    /**
+     * Verifica username + password e, se sono giusti,
+     * CARICA l'oggetto User COMPLETO (con preferiti inclusi)
+     */
+    private User verificaCredenziali(String username, String password) {
         String hash = hashPassword(password);
+
         try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
             String line;
+
             while ((line = br.readLine()) != null) {
+
+                // salta intestazione CSV
                 if (line.startsWith("nome,")) continue;
+
                 String[] campi = line.split(",");
+
                 if (campi.length >= 5) {
-                    String user = campi[2].trim();
-                    String storedHash = campi[3].trim();
-                    String ruolo = campi[4].trim();
-                    if (user.equals(username) && storedHash.equals(hash))
-                        return ruolo;
+                    String csvNome     = campi[0].trim();
+                    String csvCognome  = campi[1].trim();
+                    String csvUsername = campi[2].trim();
+                    String csvHash     = campi[3].trim();
+                    String csvRuolo    = campi[4].trim();
+
+                    if (csvUsername.equals(username) && csvHash.equals(hash)) {
+
+                        // ⭐ CREA L'UTENTE COMPLETO
+                        User u = new User(csvUsername, csvHash, csvNome, csvCognome, csvRuolo);
+
+                        // ⭐ CARICA I PREFERITI (colonna 6)
+                        if (campi.length >= 6 && !campi[5].trim().isEmpty()) {
+                            String[] pref = campi[5].trim().split("-");
+                            for (String p : pref) {
+                                try {
+                                    u.aggiungiPreferito(Integer.parseInt(p));
+                                } catch (NumberFormatException ignored) {}
+                            }
+                        }
+
+                        return u;
+                    }
                 }
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Errore lettura utenti.csv");
         }
+
         return null;
     }
 
@@ -102,5 +134,4 @@ public class LoginFrame extends JFrame {
             return password;
         }
     }
-
 }

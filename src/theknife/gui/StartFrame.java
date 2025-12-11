@@ -2,6 +2,8 @@ package theknife.gui;
 
 import java.awt.*;
 import javax.swing.*;
+
+import theknife.model.User;
 import theknife.utils.Theme;
 
 public class StartFrame extends JFrame {
@@ -50,11 +52,20 @@ public class StartFrame extends JFrame {
             new RegisterFrame();
         });
 
-        guestBtn.addActionListener(e -> {
-            // entra in modalità ospite direttamente nell'Home
-            dispose();
-            new HomeFrame("ospite", "Ospite");
-        });
+            guestBtn.addActionListener(e -> {
+        dispose();
+
+        // ⭐ Creiamo un utente fittizio "Ospite"
+        User guest = new User(
+                "Ospite",         // username
+                "",               // password fittizia
+                "Ospite",         // nome
+                "",               // cognome
+                "ospite"          // ruolo
+        );
+
+        new HomeFrame(guest);
+    });
 
         c.gridy = 0; buttons.add(loginBtn, c);
         c.gridy = 1; buttons.add(registerBtn, c);

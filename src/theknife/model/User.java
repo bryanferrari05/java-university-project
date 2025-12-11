@@ -10,8 +10,8 @@ public class User {
     private String cognome;
     private String ruolo;
 
-    // ⭐ NUOVO: lista dei ristoranti preferiti
-    private List<String> preferiti;
+    // ⭐ NUOVO: lista dei ristoranti preferiti (ID = numero riga)
+    private List<Integer> preferiti;
 
     public User(String username, String password, String nome, String cognome, String ruolo) {
         this.username = username;
@@ -20,7 +20,7 @@ public class User {
         this.cognome = cognome;
         this.ruolo = ruolo;
 
-        this.preferiti = new ArrayList<>(); // inizializza la lista vuota
+        this.preferiti = new ArrayList<>(); // inizializza la lista dei preferiti
     }
 
     // Getters
@@ -30,22 +30,22 @@ public class User {
     public String getCognome() { return cognome; }
     public String getRuolo() { return ruolo; }
 
-    // ⭐ NUOVO: metodi per i preferiti
-    public List<String> getPreferiti() {
+    // ⭐ Metodi per i preferiti (basati su ID del ristorante)
+    public List<Integer> getPreferiti() {
         return preferiti;
     }
 
-    public void aggiungiPreferito(String ristoranteNome) {
-        if (!preferiti.contains(ristoranteNome)) {
-            preferiti.add(ristoranteNome);
+    public void aggiungiPreferito(int idRistorante) {
+        if (!preferiti.contains(idRistorante)) {
+            preferiti.add(idRistorante);
         }
     }
 
-    public void rimuoviPreferito(String ristoranteNome) {
-        preferiti.remove(ristoranteNome);
+    public void rimuoviPreferito(int idRistorante) {
+        preferiti.remove(Integer.valueOf(idRistorante));
     }
 
-    public boolean isPreferito(String ristoranteNome) {
-        return preferiti.contains(ristoranteNome);
+    public boolean isPreferito(int idRistorante) {
+        return preferiti.contains(idRistorante);
     }
 }

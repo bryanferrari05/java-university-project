@@ -10,20 +10,27 @@ import javax.swing.*;
 import theknife.controller.GestioneRecensioni;
 import theknife.model.Recensione;
 import theknife.model.Ristorante;
+import theknife.model.User;
 
 @SuppressWarnings("unused")
 public class SectionPanels {
 
+    // 🔥 Rimangono questi due perché il tuo file li usa ovunque
     private static String CURRENT_ROLE = "ospite";
     private static String CURRENT_USERNAME = "Ospite";
-    private static Consumer<JPanel> NAVIGATE; // per cambiare il pannello centrale (fornito da HomeFrame)
 
-    public static void setSession(String ruolo, String username, Consumer<JPanel> navigate) {
-        CURRENT_ROLE = ruolo == null ? "ospite" : ruolo;
-        CURRENT_USERNAME = username == null ? "Ospite" : username;
+    // 🔥 Aggiunta nuova: user completo
+    private static User CURRENT_USER = null;
+
+    private static Consumer<JPanel> NAVIGATE;
+
+
+    public static void setSession(User user, Consumer<JPanel> navigate) {
+        CURRENT_USER = user;
+        CURRENT_ROLE = user.getRuolo();
+        CURRENT_USERNAME = user.getUsername();
         NAVIGATE = navigate;
     }
-
     public static JPanel creaHomeTopRistoranti() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
@@ -180,9 +187,9 @@ public class SectionPanels {
 
                     JButton vediBtn = new JButton("Visualizza dettagli");
                     vediBtn.addActionListener(ev -> {
-                        new theknife.gui.components.RestaurantDetailsFrame(r);
+                        int id = getIdByRistorante(r);
+                        new theknife.gui.components.RestaurantDetailsFrame(CURRENT_USER, id, r);
                     });
-
                     card.add(vediBtn, BorderLayout.EAST);
 
                     resultsPanel.add(card);
@@ -239,21 +246,89 @@ public class SectionPanels {
 
 
     public static JPanel creaMieiPreferiti() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
 
-        JLabel title = new JLabel("❤️ I miei preferiti", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        title.setForeground(new Color(230, 57, 70));
-        title.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        panel.add(title, BorderLayout.NORTH);
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setBackground(Color.WHITE);
 
+    JLabel title = new JLabel("❤️ I miei preferiti", SwingConstants.CENTER);
+    title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+    title.setForeground(new Color(230, 57, 70));
+    title.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+    panel.add(title, BorderLayout.NORTH);
+
+    // 🔥 Otteniamo l'utente loggato
+    if (CURRENT_USER == null) {
+        JPanel ph = new JPanel();
+        ph.setBackground(Color.WHITE);
+        ph.add(new JLabel("Non sei loggato."));
+        panel.add(ph, BorderLayout.CENTER);
+        return panel;
+    }
+
+    // 🔥 Lista preferiti dell'utente
+    List<Integer> preferiti = CURRENT_USER.getPreferiti();
+
+    if (preferiti.isEmpty()) {
         JPanel placeholder = new JPanel();
         placeholder.setBackground(Color.WHITE);
         placeholder.add(new JLabel("Nessun ristorante preferito al momento."));
         panel.add(placeholder, BorderLayout.CENTER);
         return panel;
     }
+
+    // 🔥 Ristoranti dal CSV
+    List<Ristorante> tutti = getRistoranti();
+
+    JPanel list = new JPanel();
+    list.setBackground(Color.WHITE);
+    list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
+
+    for (Integer id : preferiti) {
+
+        // Controllo di sicurezza
+        if (id < 0 || id >= tutti.size()) continue;
+
+        Ristorante r = tutti.get(id);
+
+        JPanel card = new JPanel(new BorderLayout());
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(230, 57, 70), 1),
+                BorderFactory.createEmptyBorder(10, 14, 10, 14)
+        ));
+        card.setBackground(Color.WHITE);
+
+        JLabel nome = new JLabel(r.getNome() + " • " + r.getTipoCucina());
+        nome.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        JLabel info = new JLabel(r.getCitta() + " • " + r.getFasciaPrezzo());
+        info.setForeground(new Color(90, 90, 90));
+
+        JPanel text = new JPanel();
+        text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
+        text.setBackground(Color.WHITE);
+        text.add(nome);
+        text.add(info);
+
+        card.add(text, BorderLayout.CENTER);
+
+        JButton dettagli = new JButton("Dettagli");
+        dettagli.addActionListener(e -> {
+            new RestaurantDetailsFrame(CURRENT_USER, id, r);
+        });
+
+        card.add(dettagli, BorderLayout.EAST);
+
+        list.add(card);
+        list.add(Box.createVerticalStrut(10));
+    }
+
+    JScrollPane scroll = new JScrollPane(list);
+    scroll.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+    scroll.getVerticalScrollBar().setUnitIncrement(16);
+    panel.add(scroll, BorderLayout.CENTER);
+
+    return panel;
+}
+
 
     public static JPanel creaMieiRistoranti() {
     JPanel panel = new JPanel(new BorderLayout());
@@ -570,5 +645,16 @@ public class SectionPanels {
 
         d.setContentPane(container);
         d.setVisible(true);
+    }
+
+    private static int getIdByRistorante(Ristorante target) {
+        List<Ristorante> lista = getRistoranti();
+
+        for (int i = 0; i < lista.size(); i++) {
+            if (lista.get(i).getNome().equals(target.getNome())) {
+                return i;  // ID = numero della riga del CSV
+            }
+        }
+        return -1;
     }
 }

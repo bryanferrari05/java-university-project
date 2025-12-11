@@ -1,16 +1,25 @@
 package theknife.gui.components;
+
 import theknife.model.Ristorante;
+import theknife.model.User;
+
 import javax.swing.*;
 import java.awt.*;
-
+import java.io.*;
 
 public class RestaurantDetailsFrame extends JFrame {
 
-    public RestaurantDetailsFrame(Ristorante r) {
+    private final User user;
+    private final int restaurantId;
+
+    public RestaurantDetailsFrame(User user, int restaurantId, Ristorante r) {
+
+        this.user = user;
+        this.restaurantId = restaurantId;
 
         // ----- FINESTRA PRINCIPALE -----
         setTitle("Dettagli – " + r.getNome());
-        setResizable(true); // deve essere true per funzionare bene con pack()
+        setResizable(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel container = new JPanel(new BorderLayout());
@@ -29,17 +38,11 @@ public class RestaurantDetailsFrame extends JFrame {
         content.setBackground(Color.WHITE);
         content.setBorder(BorderFactory.createEmptyBorder(10, 50, 20, 50));
 
-        // =======================
-        //   INFO PRINCIPALI
-        // =======================
         content.add(makeRow("Sito Web:", r.getWebsiteUrl()));
         content.add(makeRow("Latitudine:", String.valueOf(r.getLatitude())));
         content.add(makeRow("Longitudine:", String.valueOf(r.getLongitude())));
         content.add(Box.createVerticalStrut(25));
 
-        // =======================
-        //   SERVIZI DISPONIBILI
-        // =======================
         JLabel serviziTitle = sectionTitle("Servizi disponibili:");
         content.add(serviziTitle);
 
@@ -56,39 +59,40 @@ public class RestaurantDetailsFrame extends JFrame {
 
         serviziRow.add(disponibilita);
         content.add(serviziRow);
-
         content.add(Box.createVerticalStrut(30));
 
-        // =======================
-        //   FACILITIES
-        // =======================
         content.add(sectionTitle("Servizi del locale:"));
         content.add(bigTextBox(r.getFacilitiesAndServices(), 120));
-
         content.add(Box.createVerticalStrut(30));
 
-        // =======================
-        //   DESCRIZIONE
-        // =======================
         content.add(sectionTitle("Descrizione:"));
         content.add(bigTextBox(r.getDescription(), 200));
-
         content.add(Box.createVerticalStrut(40));
 
-        // SCROLLPANE
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
-
         container.add(scrollPane, BorderLayout.CENTER);
 
         // ----- FOOTER -----
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         footer.setBackground(Color.WHITE);
 
-        JButton preferitiBtn = new JButton("Aggiungi ai preferiti");
+        // ⭐ BOTTONE PREFERITI DINAMICO
+        JButton preferitiBtn = new JButton();
         preferitiBtn.setBackground(new Color(230, 57, 70));
         preferitiBtn.setForeground(Color.WHITE);
+        aggiornaBottone(preferitiBtn);
+
+        preferitiBtn.addActionListener(e -> {
+            if (user.isPreferito(restaurantId)) {
+                user.rimuoviPreferito(restaurantId);
+            } else {
+                user.aggiungiPreferito(restaurantId);
+            }
+            salvaPreferitiNelCSV();
+            aggiornaBottone(preferitiBtn);
+        });
 
         JButton closeBtn = new JButton("Chiudi");
         closeBtn.addActionListener(e -> dispose());
@@ -100,10 +104,6 @@ public class RestaurantDetailsFrame extends JFrame {
 
         setContentPane(container);
 
-        // ============================================================
-        //           ***  MODIFICA DPI-AWARE (ADATTAMENTO SCHERMO) ***
-        // ============================================================
-
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         int maxWidth = (int) (screen.width * 0.85);
         int maxHeight = (int) (screen.height * 0.85);
@@ -111,10 +111,66 @@ public class RestaurantDetailsFrame extends JFrame {
         setMinimumSize(new Dimension(700, 500));
         setPreferredSize(new Dimension(maxWidth, maxHeight));
 
-        pack();                       // Calcolo automatico dimensioni (DPI friendly)
-        setLocationRelativeTo(null);  // Centra la finestra in modo corretto
-
+        pack();
+        setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    // --------------------- SALVATAGGIO PREFERITI ---------------------
+
+    private void salvaPreferitiNelCSV() {
+        try {
+            File f = new File("data/utenti.csv");
+            BufferedReader br = new BufferedReader(new FileReader(f));
+
+            StringBuilder sb = new StringBuilder();
+            String line;
+
+            while ((line = br.readLine()) != null) {
+
+                String[] campi = line.split(",");
+
+                // Salta l'intestazione
+                if (line.startsWith("nome,")) {
+                    sb.append(line).append("\n");
+                    continue;
+                }
+
+                if (campi.length >= 5 && campi[2].equals(user.getUsername())) {
+
+                    String preferitiStr = user.getPreferiti().isEmpty() ?
+                            "" :
+                            user.getPreferiti().stream()
+                                    .map(String::valueOf)
+                                    .reduce((a, b) -> a + "-" + b)
+                                    .orElse("");
+
+                    line = String.format("%s,%s,%s,%s,%s,%s",
+                            campi[0], campi[1], campi[2], campi[3], campi[4], preferitiStr);
+                }
+
+                sb.append(line).append("\n");
+            }
+
+            br.close();
+
+            FileWriter fw = new FileWriter("data/utenti.csv");
+            fw.write(sb.toString());
+            fw.close();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Errore nel salvataggio preferiti:\n" + e.getMessage());
+        }
+    }
+
+    // --------------------- BOTTONE DINAMICO ---------------------
+
+    private void aggiornaBottone(JButton btn) {
+        if (user.isPreferito(restaurantId)) {
+            btn.setText("Rimuovi dai preferiti");
+        } else {
+            btn.setText("Aggiungi ai preferiti");
+        }
     }
 
     // --------------------- COMPONENTI DI STILE ---------------------
