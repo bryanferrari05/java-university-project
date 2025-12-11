@@ -12,7 +12,6 @@ public class RegisterFrame extends JFrame {
 
     public RegisterFrame() {
         setTitle("TheKnife - Registrazione");
-        setSize(400, 350);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(7, 2, 5, 5));
 
@@ -74,6 +73,11 @@ public class RegisterFrame extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
+
+        pack();
+        setMinimumSize(new Dimension(400, 350));
+        setLocationRelativeTo(null);
+
     }
 
     // 🔍 Controlla se username è già presente nel CSV

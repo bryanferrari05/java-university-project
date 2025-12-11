@@ -16,7 +16,6 @@ public class DialogNuovoRistorante extends JDialog {
 
     public DialogNuovoRistorante(Frame parent, String username) {
         super(parent, "Aggiungi Ristorante", true);
-        setSize(420, 420);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
 
@@ -75,5 +74,18 @@ public class DialogNuovoRistorante extends JDialog {
             JOptionPane.showMessageDialog(this, "Ristorante aggiunto con successo", "OK", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         });
+
+        pack();
+
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int maxWidth = (int) (screen.width * 0.8);
+        int maxHeight = (int) (screen.height * 0.8);
+
+        setMinimumSize(new Dimension(420, 420));
+        setMaximumSize(new Dimension(maxWidth, maxHeight));
+
+        setLocationRelativeTo(getParent());
+        setModalityType(ModalityType.APPLICATION_MODAL);
+
     }
 }

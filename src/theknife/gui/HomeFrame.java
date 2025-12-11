@@ -2,7 +2,7 @@ package theknife.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.Timer;
+
 import theknife.gui.components.NavbarPanel;
 import theknife.gui.components.SidebarPanel;
 import theknife.gui.components.SectionPanels;
@@ -21,7 +21,6 @@ public class HomeFrame extends JFrame {
         this.username = username;
 
         setTitle("TheKnife");
-        setSize(950, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -41,8 +40,18 @@ public class HomeFrame extends JFrame {
         showPanel(SectionPanels.creaHomeTopRistoranti());
         add(mainPanel, BorderLayout.CENTER);
 
-        setLocationRelativeTo(null);
         setVisible(true);
+
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int maxWidth = (int) (screen.width * 0.9);
+        int maxHeight = (int) (screen.height * 0.9);
+
+        setMinimumSize(new Dimension(900, 550));          // indicativo
+        setPreferredSize(new Dimension(maxWidth, maxHeight));
+
+        pack();
+        setLocationRelativeTo(null);
+
     }
 
     public void showPanel(JPanel panel) {

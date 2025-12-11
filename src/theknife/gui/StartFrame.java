@@ -9,8 +9,6 @@ public class StartFrame extends JFrame {
     public StartFrame() {
         setTitle("TheKnife");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(520, 360);
-        setLocationRelativeTo(null);
 
         // Background
         getContentPane().setBackground(Theme.BACKGROUND);
@@ -65,5 +63,9 @@ public class StartFrame extends JFrame {
         add(buttons, BorderLayout.SOUTH);
 
         setVisible(true);
+
+        pack();                       
+        setMinimumSize(new Dimension(520, 360));
+        setLocationRelativeTo(null);
     }
 }

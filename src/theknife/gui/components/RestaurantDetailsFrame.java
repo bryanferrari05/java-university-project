@@ -1,9 +1,8 @@
 package theknife.gui.components;
-
 import theknife.model.Ristorante;
-
 import javax.swing.*;
 import java.awt.*;
+
 
 public class RestaurantDetailsFrame extends JFrame {
 
@@ -11,9 +10,7 @@ public class RestaurantDetailsFrame extends JFrame {
 
         // ----- FINESTRA PRINCIPALE -----
         setTitle("Dettagli – " + r.getNome());
-        setSize(750, 720);
-        setResizable(false);
-        setLocationRelativeTo(null);
+        setResizable(true); // deve essere true per funzionare bene con pack()
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel container = new JPanel(new BorderLayout());
@@ -38,7 +35,6 @@ public class RestaurantDetailsFrame extends JFrame {
         content.add(makeRow("Sito Web:", r.getWebsiteUrl()));
         content.add(makeRow("Latitudine:", String.valueOf(r.getLatitude())));
         content.add(makeRow("Longitudine:", String.valueOf(r.getLongitude())));
-
         content.add(Box.createVerticalStrut(25));
 
         // =======================
@@ -103,6 +99,21 @@ public class RestaurantDetailsFrame extends JFrame {
         container.add(footer, BorderLayout.SOUTH);
 
         setContentPane(container);
+
+        // ============================================================
+        //           ***  MODIFICA DPI-AWARE (ADATTAMENTO SCHERMO) ***
+        // ============================================================
+
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int maxWidth = (int) (screen.width * 0.85);
+        int maxHeight = (int) (screen.height * 0.85);
+
+        setMinimumSize(new Dimension(700, 500));
+        setPreferredSize(new Dimension(maxWidth, maxHeight));
+
+        pack();                       // Calcolo automatico dimensioni (DPI friendly)
+        setLocationRelativeTo(null);  // Centra la finestra in modo corretto
+
         setVisible(true);
     }
 

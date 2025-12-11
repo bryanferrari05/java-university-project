@@ -12,7 +12,6 @@ public class LoginFrame extends JFrame {
 
     public LoginFrame() {
         setTitle("TheKnife - Login");
-        setSize(420, 350);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
         getContentPane().setBackground(Theme.BACKGROUND);
@@ -64,6 +63,11 @@ public class LoginFrame extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
+
+        pack();
+        setMinimumSize(new Dimension(420, 350)); // se vuoi mantenerla più o meno così
+        setLocationRelativeTo(null);
+
     }
 
     private String verificaCredenziali(String username, String password) {
@@ -98,4 +102,5 @@ public class LoginFrame extends JFrame {
             return password;
         }
     }
+
 }
