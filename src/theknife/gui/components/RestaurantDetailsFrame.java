@@ -38,9 +38,13 @@ public class RestaurantDetailsFrame extends JFrame {
         content.setBackground(Color.WHITE);
         content.setBorder(BorderFactory.createEmptyBorder(10, 50, 20, 50));
 
-        content.add(makeRow("Sito Web:", r.getWebsiteUrl()));
-        content.add(makeRow("Latitudine:", String.valueOf(r.getLatitude())));
-        content.add(makeRow("Longitudine:", String.valueOf(r.getLongitude())));
+        content.add(makeRow("Indirizzo: ", String.valueOf(r.getAddress())));
+        content.add(makeRow("Numero Telefonico: ", String.valueOf(r.getPhoneNumber())));
+        content.add(makeRow("Sito Web: ", r.getWebsiteUrl()));
+        content.add(makeRow("Tipo di CUcina: ", String.valueOf(r.getCuisine())));
+        content.add(makeRow("Valuta: ", String.valueOf(r.getPrice())));
+        content.add(makeRow("Stelle: ", String.valueOf(r.getAward())));
+
         content.add(Box.createVerticalStrut(25));
 
         JLabel serviziTitle = sectionTitle("Servizi disponibili:");
