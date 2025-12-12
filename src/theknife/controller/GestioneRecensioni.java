@@ -64,14 +64,4 @@ public class GestioneRecensioni {
                 .count();
     }
 
-    // ================= CSV STUB (da collegare al backend) =================
-
-    public static synchronized void loadRecensioniDaCSV(String pathCsv) {
-        // TODO: il tuo compagno caricherà qui le recensioni da CSV in RECENSIONI
-        // formato proposto (es.): ristorante;autore;stelle;testo;rispostaRistoratore
-    }
-
-    public static synchronized void saveRecensioniSuCSV(String pathCsv) {
-        // TODO: il tuo compagno salverà qui le recensioni RECENSIONI su CSV
-    }
 }
