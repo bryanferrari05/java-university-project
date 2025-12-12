@@ -8,56 +8,53 @@ import theknife.gui.components.SidebarPanel;
 import theknife.gui.components.SectionPanels;
 import theknife.model.User;
 
-@SuppressWarnings("unused")
 public class HomeFrame extends JFrame {
 
-    private final String ruolo;
-    private final String username;
     private final User user;
-
     private final JPanel mainPanel;
     private final SidebarPanel sidebar;
     private boolean sidebarVisible = false;
 
-    // ⭐ NUOVO COSTRUTTORE: riceve l'oggetto User completo
-    public HomeFrame(User user) {
+    public User getCurrentUser() {
+        return user;
+    }
 
-        this.user = user;                // ⭐ Manteniamo l’utente completo
-        this.ruolo = user.getRuolo();    // estraiamo ruolo
-        this.username = user.getUsername(); // estraiamo username
+
+    public HomeFrame(User user) {
+        this.user = user;
 
         setTitle("TheKnife");
+        setSize(950, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // ⭐ PASSIAMO ruolo e username come prima → nessun altro codice da modificare
-        SectionPanels.setSession(this.user, this::showPanel);
+        // ⭐ Passiamo la sessione con il vero oggetto User
+        SectionPanels.setSession(user, this::showPanel);
 
-
-        NavbarPanel navbar = new NavbarPanel(username, this, ruolo, this::toggleSidebar);
+        // ⭐ Navbar: usa username e ruolo reali
+        NavbarPanel navbar = new NavbarPanel(
+                user.getUsername(),   // username per display
+                this,
+                user.getRuolo(),      // ruolo dell’utente
+                this::toggleSidebar
+        );
         add(navbar, BorderLayout.NORTH);
 
-        sidebar = new SidebarPanel(ruolo, this);
+        sidebar = new SidebarPanel(user.getRuolo(), this);
         sidebar.setPreferredSize(new Dimension(0, getHeight()));
         sidebar.setVisible(false);
         add(sidebar, BorderLayout.WEST);
 
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
-        showPanel(SectionPanels.creaHomeTopRistoranti());
+
+        // ⭐ NUOVA HOME DI BENVENUTO
+        showPanel(SectionPanels.creaHomeBenvenuto());
+
         add(mainPanel, BorderLayout.CENTER);
 
-        setVisible(true);
-
-        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        int maxWidth = (int) (screen.width * 0.9);
-        int maxHeight = (int) (screen.height * 0.9);
-
-        setMinimumSize(new Dimension(900, 550));
-        setPreferredSize(new Dimension(maxWidth, maxHeight));
-
-        pack();
         setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     public void showPanel(JPanel panel) {
@@ -79,15 +76,12 @@ public class HomeFrame extends JFrame {
                 if (!sidebarVisible) sidebar.setVisible(false);
             } else {
                 int step = (targetWidth > currentWidth) ? 10 : -10;
-                sidebar.setPreferredSize(new Dimension(currentWidth + step, getHeight()));
+                sidebar.setPreferredSize(
+                        new Dimension(currentWidth + step, getHeight())
+                );
                 sidebar.revalidate();
             }
         });
         timer.start();
-    }
-
-    // ⭐ Getter per l’utente (ti servirà dopo nella GUI Preferiti)
-    public User getUser() {
-        return user;
     }
 }

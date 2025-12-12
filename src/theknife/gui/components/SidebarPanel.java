@@ -89,7 +89,8 @@ public class SidebarPanel extends JPanel {
         if (parent == null) return;
 
         switch (text) {
-            case "Home" -> parent.showPanel(SectionPanels.creaHomeTopRistoranti());
+                        
+            case "Home" -> parent.showPanel(SectionPanels.creaHomeBenvenuto());
             case "Cerca Ristoranti" -> parent.showPanel(SectionPanels.creaCercaRistoranti());
             case "I miei Preferiti" -> parent.showPanel(SectionPanels.creaMieiPreferiti());
             case "I miei Ristoranti" -> parent.showPanel(SectionPanels.creaMieiRistoranti());

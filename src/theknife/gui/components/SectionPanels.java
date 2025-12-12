@@ -18,6 +18,7 @@ public class SectionPanels {
     // 🔥 Rimangono questi due perché il tuo file li usa ovunque
     private static String CURRENT_ROLE = "ospite";
     private static String CURRENT_USERNAME = "Ospite";
+    
 
     // 🔥 Aggiunta nuova: user completo
     private static User CURRENT_USER = null;
@@ -31,35 +32,43 @@ public class SectionPanels {
         CURRENT_USERNAME = user.getUsername();
         NAVIGATE = navigate;
     }
-    public static JPanel creaHomeTopRistoranti() {
+
+        public static JPanel creaHomeBenvenuto() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        JLabel title = new JLabel("🍷 Ristoranti più votati", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        title.setForeground(new Color(230, 57, 70));
-        title.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
-        panel.add(title, BorderLayout.NORTH);
+        String titolo;
+        String sottotitolo;
 
-        JPanel content = new JPanel(new GridLayout(0, 2, 20, 20));
-        content.setBackground(Color.WHITE);
+        if (CURRENT_USER.getRuolo().equalsIgnoreCase("ospite")) {
+            titolo = "Benvenuto in TheKnife!";
+            sottotitolo = "Registrati o accedi per utilizzare le funzionalità della piattaforma.";
+        } else {
+            titolo = "Benvenuto in TheKnife " + CURRENT_USER.getUsername() + "!";
+            sottotitolo = "Spostati nei menu per utilizzare le funzionalità della piattaforma.";
+        }
 
-        List<Ristorante> tuttiRistoranti = getRistoranti();
+        JLabel titleLabel = new JLabel(titolo, SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setForeground(new Color(230, 57, 70));
 
-        tuttiRistoranti.stream()
-            .filter(r -> r.getAward() != null && (r.getAward().contains("1 Star") || r.getAward().contains("2 Stars") || r.getAward().contains("3 Stars")))
-            .sorted((r1, r2) -> {
-                int stelle1 = Integer.parseInt(r1.getAward().substring(0, 1));
-                int stelle2 = Integer.parseInt(r2.getAward().substring(0, 1));
-                return Integer.compare(stelle2, stelle1);
-            })
-            .limit(6)
-            .forEach(r -> content.add(creaCardRistorante(r.getNome(), r.getCitta(), r.getTipoCucina(), r.getFasciaPrezzo(), r.getAward())));
+        JLabel subtitleLabel = new JLabel(sottotitolo, SwingConstants.CENTER);
+        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        subtitleLabel.setForeground(new Color(80, 80, 80));
 
-        JScrollPane scrollPane = new JScrollPane(content);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        JPanel center = new JPanel();
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        center.setBackground(Color.WHITE);
+        center.setBorder(BorderFactory.createEmptyBorder(80, 40, 80, 40));
+
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        center.add(titleLabel);
+        center.add(Box.createVerticalStrut(20));
+        center.add(subtitleLabel);
+
+        panel.add(center, BorderLayout.CENTER);
 
         return panel;
     }
