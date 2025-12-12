@@ -3,6 +3,7 @@
   "configurations": [
     {
       "type": "java",
+<<<<<<< Updated upstream
       "name": "TheKnife",
       "request": "launch",
       "mainClass": "theknife.TheKnife",
@@ -28,6 +29,19 @@
       "request": "launch",
       "mainClass": "theknife.TheKnife",
       "projectName": "JAVA-UNIVERSITY-PROJECT"
+=======
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "Main",
+      "projectName": "java-university-project_995d2848"
+    },
+    {
+      "type": "java",
+      "name": "Run TheKnife",
+      "request": "launch",
+      "mainClass": "theknife.TheKnife",
+      "cwd": "${workspaceFolder}"
+>>>>>>> Stashed changes
     }
   ]
 }
