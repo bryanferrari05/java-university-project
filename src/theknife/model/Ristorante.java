@@ -77,6 +77,17 @@ public class Ristorante {
     public boolean isDelivery() { return delivery; }
     public boolean isPrenotazione() { return prenotazione; }
 
+    public int getStarCount() {
+        if (award == null) return 0;
+        String lower = award.toLowerCase();
+        if (!lower.contains("star")) return 0;
+        for (int i = 0; i < lower.length(); i++) {
+            char ch = lower.charAt(i);
+            if (ch >= '1' && ch <= '5') return ch - '0';
+        }
+        return 0;
+    }
+
     // ---- GETTER DI COMPATIBILITÀ (vecchio codice SectionPanels) ----
 
     // Il vecchio codice usava getCitta() → ora ritorna "location"

@@ -16,7 +16,7 @@ public class SearchPanelFactory {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        JLabel title = new JLabel("🔍 Cerca Ristoranti", SwingConstants.CENTER);
+        JLabel title = new JLabel("Cerca Ristoranti", SwingConstants.CENTER);
         title.setFont(new Font("Segoe UI", Font.BOLD, 26));
         title.setForeground(new Color(230, 57, 70));
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
@@ -34,10 +34,10 @@ public class SearchPanelFactory {
         JTextField cittaField = new JTextField(10);
         JTextField tipoField = new JTextField(10);
         JComboBox<String> fasciaBox = new JComboBox<>(new String[]{
-                "Qualsiasi", "<30€", "30€-50€", "50€-100€", ">100€"
+                "Qualsiasi", "<30 EUR", "30-50 EUR", "50-100 EUR", ">100 EUR"
         });
         JComboBox<String> stelleBox = new JComboBox<>(new String[]{
-                "Qualsiasi", "≥1⭐", "≥2⭐", "≥3⭐", "≥4⭐", "5⭐"
+                "Qualsiasi", "1+", "2+", "3+", "4+", "5"
         });
         JCheckBox deliveryBox = new JCheckBox("Delivery disponibile");
         JCheckBox prenotaBox = new JCheckBox("Prenotazione online");
@@ -48,7 +48,7 @@ public class SearchPanelFactory {
         c.gridx = 2; filters.add(new JLabel("Tipo cucina:"), c);
         c.gridx = 3; filters.add(tipoField, c);
 
-        c.gridx = 0; c.gridy = 1; filters.add(new JLabel("Città*:"), c);
+        c.gridx = 0; c.gridy = 1; filters.add(new JLabel("Citta*:"), c);
         c.gridx = 1; filters.add(cittaField, c);
         c.gridx = 2; filters.add(new JLabel("Fascia di prezzo:"), c);
         c.gridx = 3; filters.add(fasciaBox, c);
@@ -90,13 +90,16 @@ public class SearchPanelFactory {
 
             if (citta.isEmpty()) {
                 JOptionPane.showMessageDialog(panel,
-                        "Inserisci almeno la città per effettuare la ricerca.",
+                        "Inserisci almeno la citta per effettuare la ricerca.",
                         "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             List<Ristorante> tutti = RistoranteRepository.getRistoranti();
             List<Ristorante> risultati = new ArrayList<>();
+            Double[] centro = getCityCenter(tutti, citta);
+            double raggioKm = parseRadiusKm(distanzaField.getText());
+            Integer stelleMinime = parseMinStars((String) stelleBox.getSelectedItem());
 
             for (Ristorante r : tutti) {
                 boolean ok = true;
@@ -106,7 +109,12 @@ public class SearchPanelFactory {
                 if (!tipo.isEmpty() && !r.getTipoCucina().toLowerCase().contains(tipo)) ok = false;
                 if (delivery && !r.isDelivery()) ok = false;
                 if (prenota && !r.isPrenotazione()) ok = false;
-                if (!fascia.equals("Qualsiasi") && !r.getFasciaPrezzo().equalsIgnoreCase(fascia)) ok = false;
+                if (!"Qualsiasi".equals(fascia) && !priceMatchesRange(r.getFasciaPrezzo(), fascia)) ok = false;
+                if (stelleMinime != null && r.getStarCount() < stelleMinime) ok = false;
+                if (raggioKm > 0 && centro[0] != null && centro[1] != null) {
+                    double dist = haversineKm(centro[0], centro[1], r.getLatitude(), r.getLongitude());
+                    if (dist > raggioKm) ok = false;
+                }
 
                 if (ok) risultati.add(r);
             }
@@ -127,7 +135,7 @@ public class SearchPanelFactory {
                     JLabel nomeL = new JLabel(r.getNome());
                     nomeL.setFont(new Font("Segoe UI", Font.BOLD, 15));
                     JLabel infoL = new JLabel(
-                            r.getCitta() + " • " + r.getTipoCucina() + " • " + r.getFasciaPrezzo()
+                            r.getCitta() + " | " + r.getTipoCucina() + " | " + r.getFasciaPrezzo()
                     );
                     infoL.setForeground(new Color(90, 90, 90));
 
@@ -157,5 +165,88 @@ public class SearchPanelFactory {
         });
 
         return panel;
+    }
+
+    private static Double[] getCityCenter(List<Ristorante> tutti, String citta) {
+        double sumLat = 0.0;
+        double sumLon = 0.0;
+        int count = 0;
+        for (Ristorante r : tutti) {
+            if (r.getCitta().toLowerCase().contains(citta)) {
+                sumLat += r.getLatitude();
+                sumLon += r.getLongitude();
+                count++;
+            }
+        }
+        if (count == 0) return new Double[]{null, null};
+        return new Double[]{sumLat / count, sumLon / count};
+    }
+
+    private static double parseRadiusKm(String text) {
+        if (text == null) return 0.0;
+        String trimmed = text.trim();
+        if (trimmed.isEmpty()) return 0.0;
+        try {
+            return Double.parseDouble(trimmed.replace(",", "."));
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+    private static Integer parseMinStars(String selection) {
+        if (selection == null || selection.equals("Qualsiasi")) return null;
+        String digits = selection.replace("+", "").trim();
+        try {
+            return Integer.parseInt(digits);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private static boolean priceMatchesRange(String prezzo, String fascia) {
+        int level = priceLevel(prezzo);
+        if (level == 0) return false;
+        switch (fascia) {
+            case "<30 EUR":
+                return level == 1;
+            case "30-50 EUR":
+                return level == 2;
+            case "50-100 EUR":
+                return level == 3;
+            case ">100 EUR":
+                return level >= 4;
+            default:
+                return true;
+        }
+    }
+
+    private static int priceLevel(String prezzo) {
+        if (prezzo == null) return 0;
+        int euro = countChar(prezzo, '\u20AC');
+        int dollar = countChar(prezzo, '$');
+        int level = Math.max(euro, dollar);
+        if (level == 0) {
+            int ticks = countChar(prezzo, '\'');
+            if (ticks >= 1 && ticks <= 4) level = ticks;
+        }
+        return level;
+    }
+
+    private static int countChar(String text, char target) {
+        int count = 0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == target) count++;
+        }
+        return count;
+    }
+
+    private static double haversineKm(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return 6371.0 * c;
     }
 }
