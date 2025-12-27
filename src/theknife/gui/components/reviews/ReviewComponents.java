@@ -12,35 +12,67 @@ public class ReviewComponents {
 
     public static JPanel cardRecensione(Recensione r, boolean consentiRisposta) {
 
-        JPanel p = new JPanel(new BorderLayout());
+        JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setBackground(Color.WHITE);
         p.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(230, 57, 70), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                BorderFactory.createEmptyBorder(10, 14, 10, 14)
         ));
 
-        JLabel top = new JLabel("@" + r.getAutoreUsername() + " • " + r.getStelle() + "⭐");
-        top.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        p.add(top, BorderLayout.NORTH);
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(Color.WHITE);
+
+        JLabel author = new JLabel("@" + r.getAutoreUsername());
+        author.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        author.setForeground(new Color(40, 40, 40));
+
+        String info = r.getRistoranteNome();
+        if (r.getRistoranteCitta() != null && !r.getRistoranteCitta().isBlank()) {
+            info += " (" + r.getRistoranteCitta() + ")";
+        }
+        JLabel restaurant = new JLabel(info);
+        restaurant.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        restaurant.setForeground(new Color(120, 120, 120));
+
+        JLabel rating = new JLabel("Stelle: " + r.getStelle() + "/5");
+        rating.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        rating.setForeground(new Color(90, 90, 90));
+
+        JPanel left = new JPanel();
+        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+        left.setBackground(Color.WHITE);
+        left.add(author);
+        left.add(restaurant);
+
+        header.add(left, BorderLayout.WEST);
+        header.add(rating, BorderLayout.EAST);
+        p.add(header, BorderLayout.NORTH);
 
         JTextArea body = new JTextArea(r.getTesto());
         body.setLineWrap(true);
         body.setWrapStyleWord(true);
         body.setEditable(false);
-        body.setBackground(Color.WHITE);
-        body.setBorder(BorderFactory.createEmptyBorder(6, 0, 4, 0));
+        body.setBackground(new Color(250, 250, 250));
+        body.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(235, 235, 235), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)
+        ));
         p.add(body, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new BorderLayout());
         bottom.setBackground(Color.WHITE);
+        bottom.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 
         if (r.getRispostaRistoratore() != null && !r.getRispostaRistoratore().isBlank()) {
-            JTextArea rep = new JTextArea("Risposta del ristoratore: " + r.getRispostaRistoratore());
+            JTextArea rep = new JTextArea("Risposta del ristoratore:\n" + r.getRispostaRistoratore());
             rep.setLineWrap(true);
             rep.setWrapStyleWord(true);
             rep.setEditable(false);
             rep.setBackground(new Color(246, 255, 247));
-            rep.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+            rep.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(220, 245, 225), 1),
+                    BorderFactory.createEmptyBorder(6, 8, 6, 8)
+            ));
             bottom.add(rep, BorderLayout.CENTER);
         } else if (consentiRisposta) {
             JButton rispondi = new JButton("Rispondi");
@@ -48,7 +80,7 @@ public class ReviewComponents {
                 String risposta = chiediTesto("Scrivi la risposta (una sola, definitiva):");
                 if (risposta != null && !risposta.isBlank()) {
                     GestioneRecensioni.rispondiRistoratore(
-                            r.getRistoranteNome(),
+                            r.getRistoranteId(),
                             r.getAutoreUsername(),
                             risposta.trim()
                     );
@@ -57,7 +89,7 @@ public class ReviewComponents {
 
                     Window w = SwingUtilities.getWindowAncestor(p);
                     if (w != null) w.dispose();
-                    apriDialogRecensioni(r.getRistoranteNome());
+                    apriDialogRecensioni(r.getRistoranteId(), r.getRistoranteNome());
                 }
             });
             bottom.add(rispondi, BorderLayout.EAST);
@@ -67,9 +99,9 @@ public class ReviewComponents {
         return p;
     }
 
-    public static void apriDialogRecensioni(String ristoranteNome) {
+    public static void apriDialogRecensioni(int ristoranteId, String ristoranteNome) {
 
-        JDialog d = new JDialog((Frame) null, "Recensioni • " + ristoranteNome, true);
+        JDialog d = new JDialog((Frame) null, "Recensioni - " + ristoranteNome, true);
         d.setSize(560, 520);
         d.setLocationRelativeTo(null);
 
@@ -82,7 +114,7 @@ public class ReviewComponents {
         container.add(title, BorderLayout.NORTH);
 
         List<Recensione> elenco =
-                GestioneRecensioni.getRecensioniRistorante(ristoranteNome);
+                GestioneRecensioni.getRecensioniRistorante(ristoranteId);
 
         JPanel list = new JPanel();
         list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));

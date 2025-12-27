@@ -55,8 +55,9 @@ public class RistoranteRepository {
         List<Ristorante> lista = getRistoranti();
 
         for (int i = 0; i < lista.size(); i++) {
-            if (lista.get(i).getNome().equals(target.getNome())) {
-                return i;
+            if (lista.get(i).getNome().equals(target.getNome())
+                    && lista.get(i).getCitta().equals(target.getCitta())) {
+                return i + 1;
             }
         }
         return -1;

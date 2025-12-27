@@ -7,6 +7,7 @@ import javax.swing.*;
 
 import theknife.gui.components.RestaurantDetailsFrame;
 import theknife.gui.components.SectionPanels;
+import theknife.controller.GestioneRecensioni;
 import theknife.model.Ristorante;
 
 public class SearchPanelFactory {
@@ -153,7 +154,31 @@ public class SearchPanelFactory {
                         new RestaurantDetailsFrame(SectionPanels.CURRENT_USER, id, r);
                     });
 
-                    card.add(vediBtn, BorderLayout.EAST);
+                    JButton recensioneBtn = new JButton("Lascia recensione");
+                    recensioneBtn.addActionListener(ev -> {
+                        if (SectionPanels.CURRENT_USER == null
+                                || "ospite".equalsIgnoreCase(SectionPanels.CURRENT_ROLE)) {
+                            JOptionPane.showMessageDialog(panel,
+                                    "Per lasciare una recensione devi accedere.",
+                                    "Accesso richiesto", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
+                        int ristoranteId = RistoranteRepository.getIdByRistorante(r);
+                        if (ristoranteId < 0) {
+                            JOptionPane.showMessageDialog(panel,
+                                    "Impossibile trovare il ristorante selezionato.",
+                                    "Errore", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        apriDialogRecensione(panel, r, ristoranteId);
+                    });
+
+                    JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+                    actions.setBackground(Color.WHITE);
+                    actions.add(recensioneBtn);
+                    actions.add(vediBtn);
+
+                    card.add(actions, BorderLayout.EAST);
 
                     resultsPanel.add(card);
                     resultsPanel.add(Box.createVerticalStrut(10));
@@ -165,6 +190,72 @@ public class SearchPanelFactory {
         });
 
         return panel;
+    }
+
+    private static void apriDialogRecensione(Component parent, Ristorante ristorante, int ristoranteId) {
+        JComboBox<String> stelleBox = new JComboBox<>(
+                new String[]{"1", "2", "3", "4", "5"}
+        );
+
+        JTextArea testoArea = new JTextArea(5, 24);
+        testoArea.setLineWrap(true);
+        testoArea.setWrapStyleWord(true);
+        JScrollPane testoScroll = new JScrollPane(testoArea);
+
+        JPanel form = new JPanel(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.insets = new Insets(6, 8, 6, 8);
+        gc.anchor = GridBagConstraints.WEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+
+        gc.gridx = 0; gc.gridy = 0;
+        form.add(new JLabel("Stelle (1-5):"), gc);
+        gc.gridx = 1;
+        form.add(stelleBox, gc);
+
+        gc.gridx = 0; gc.gridy = 1; gc.gridwidth = 2;
+        form.add(new JLabel("Recensione:"), gc);
+        gc.gridy = 2; gc.weightx = 1.0; gc.weighty = 1.0;
+        gc.fill = GridBagConstraints.BOTH;
+        form.add(testoScroll, gc);
+
+        int result = JOptionPane.showConfirmDialog(
+                parent, form, "Lascia una recensione - " + ristorante.getNome(),
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != JOptionPane.OK_OPTION) return;
+
+        String testo = testoArea.getText().trim();
+        int stelle = Integer.parseInt((String) stelleBox.getSelectedItem());
+
+        if (testo.isEmpty()) {
+            JOptionPane.showMessageDialog(parent,
+                    "Inserisci il testo della recensione.",
+                    "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (GestioneRecensioni.utenteHaRecensito(
+                SectionPanels.CURRENT_USERNAME, ristoranteId)) {
+            JOptionPane.showMessageDialog(parent,
+                    "Hai gia lasciato una recensione per questo ristorante.",
+                    "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        GestioneRecensioni.aggiungiRecensione(
+                ristoranteId,
+                ristorante.getNome(),
+                ristorante.getCitta(),
+                SectionPanels.CURRENT_USERNAME,
+                stelle,
+                testo
+        );
+
+        JOptionPane.showMessageDialog(parent,
+                "Recensione salvata.",
+                "OK", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private static Double[] getCityCenter(List<Ristorante> tutti, String citta) {
