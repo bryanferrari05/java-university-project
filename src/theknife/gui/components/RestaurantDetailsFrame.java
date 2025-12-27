@@ -1,11 +1,14 @@
 package theknife.gui.components;
 
+import theknife.controller.GestioneRecensioni;
+import theknife.model.Recensione;
 import theknife.model.Ristorante;
 import theknife.model.User;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.util.List;
 
 public class RestaurantDetailsFrame extends JFrame {
 
@@ -72,6 +75,10 @@ public class RestaurantDetailsFrame extends JFrame {
         content.add(sectionTitle("Descrizione:"));
         content.add(bigTextBox(r.getDescription(), 200));
         content.add(Box.createVerticalStrut(40));
+
+        content.add(sectionTitle("Recensioni:"));
+        content.add(makeRecensioniPanel());
+        content.add(Box.createVerticalStrut(20));
 
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(null);
@@ -224,5 +231,70 @@ public class RestaurantDetailsFrame extends JFrame {
         pane.getVerticalScrollBar().setUnitIncrement(15);
 
         return pane;
+    }
+
+    private JPanel makeRecensioniPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(Color.WHITE);
+
+        List<Recensione> recensioni = GestioneRecensioni.getRecensioniRistorante(restaurantId);
+        if (recensioni.isEmpty()) {
+            JLabel empty = new JLabel("Nessuna recensione.");
+            empty.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            empty.setForeground(new Color(60, 60, 60));
+            panel.add(empty);
+            return panel;
+        }
+
+        for (Recensione r : recensioni) {
+            JPanel card = new JPanel();
+            card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+            card.setBackground(Color.WHITE);
+            card.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(230, 57, 70), 1),
+                    BorderFactory.createEmptyBorder(10, 12, 10, 12)
+            ));
+
+            JLabel head = new JLabel("Utente: anonimo | Stelle: " + r.getStelle() + "/5");
+            head.setFont(new Font("Segoe UI", Font.BOLD, 15));
+            head.setForeground(new Color(40, 40, 40));
+
+            JTextArea testo = new JTextArea(r.getTesto());
+            testo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            testo.setForeground(new Color(50, 50, 50));
+            testo.setBackground(Color.WHITE);
+            testo.setLineWrap(true);
+            testo.setWrapStyleWord(true);
+            testo.setEditable(false);
+            testo.setBorder(BorderFactory.createEmptyBorder(6, 0, 6, 0));
+
+            card.add(head);
+            card.add(testo);
+
+            String risposta = r.getRispostaRistoratore();
+            if (risposta != null && !risposta.isBlank()) {
+                JLabel respLabel = new JLabel("Risposta ristoratore:");
+                respLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                respLabel.setForeground(new Color(40, 40, 40));
+
+                JTextArea resp = new JTextArea(risposta);
+                resp.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                resp.setForeground(new Color(70, 70, 70));
+                resp.setBackground(new Color(245, 245, 245));
+                resp.setLineWrap(true);
+                resp.setWrapStyleWord(true);
+                resp.setEditable(false);
+                resp.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+
+                card.add(respLabel);
+                card.add(resp);
+            }
+
+            panel.add(card);
+            panel.add(Box.createVerticalStrut(10));
+        }
+
+        return panel;
     }
 }
