@@ -170,6 +170,12 @@ public class SearchPanelFactory {
                                     "Errore", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
+                        if (GestioneRecensioni.ristoranteHaRaggiuntoLimite(ristoranteId)) {
+                            JOptionPane.showMessageDialog(panel,
+                                    "Questo ristorante ha gia raggiunto il limite di 2 recensioni.",
+                                    "Info", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
                         apriDialogRecensione(panel, r, ristoranteId);
                     });
 
@@ -236,10 +242,9 @@ public class SearchPanelFactory {
             return;
         }
 
-        if (GestioneRecensioni.utenteHaRecensito(
-                SectionPanels.CURRENT_USERNAME, ristoranteId)) {
+        if (GestioneRecensioni.ristoranteHaRaggiuntoLimite(ristoranteId)) {
             JOptionPane.showMessageDialog(parent,
-                    "Hai gia lasciato una recensione per questo ristorante.",
+                    "Questo ristorante ha gia raggiunto il limite di 2 recensioni.",
                     "Info", JOptionPane.INFORMATION_MESSAGE);
             return;
         }

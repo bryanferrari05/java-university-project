@@ -19,20 +19,19 @@ public class GestioneRecensioni {
 
     private static final List<Recensione> RECENSIONI = new ArrayList<>();
     private static final String CSV_PATH = "data/recensioni.csv";
+    private static final int MAX_RECENSIONI_PER_RISTORANTE = 2;
 
     static {
         loadFromCsv();
     }
 
-    public static synchronized boolean utenteHaRecensito(String username, int ristoranteId) {
-        return RECENSIONI.stream()
-                .anyMatch(r -> r.getRistoranteId() == ristoranteId
-                        && r.getAutoreUsername().equalsIgnoreCase(username));
+    public static synchronized boolean ristoranteHaRaggiuntoLimite(int ristoranteId) {
+        return getConteggioRistorante(ristoranteId) >= MAX_RECENSIONI_PER_RISTORANTE;
     }
 
     public static synchronized void aggiungiRecensione(int ristoranteId, String ristoranteNome, String ristoranteCitta,
                                                        String username, int stelle, String testo) {
-        if (utenteHaRecensito(username, ristoranteId)) return;
+        if (ristoranteHaRaggiuntoLimite(ristoranteId)) return;
         RECENSIONI.add(new Recensione(ristoranteId, ristoranteNome, ristoranteCitta, username, stelle, testo));
         saveToCsv();
     }
