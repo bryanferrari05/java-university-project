@@ -34,7 +34,7 @@ public class SidebarPanel extends JPanel {
             addMenuItem("Logout", "icon-logout.png");
         } 
         else if (ruolo.equalsIgnoreCase("ristoratore")) {
-            addMenuItem("Cerca Ristoranti", "icon-search.png");
+            addMenuItem("Aggiungi Ristorante", "icon-restaurants.png");
             addMenuItem("I miei Ristoranti", "icon-favorites.png");
             addMenuItem("Recensioni", "icon-star.png");
             addMenuItem("Logout", "icon-logout.png");
@@ -92,6 +92,10 @@ public class SidebarPanel extends JPanel {
                         
             case "Home" -> parent.showPanel(SectionPanels.creaHomeBenvenuto());
             case "Cerca Ristoranti" -> parent.showPanel(SectionPanels.creaCercaRistoranti());
+            case "Aggiungi Ristorante" -> {
+                new DialogNuovoRistorante(parent, SectionPanels.CURRENT_USERNAME).setVisible(true);
+                parent.showPanel(SectionPanels.creaMieiRistoranti());
+            }
             case "I miei Preferiti" -> parent.showPanel(SectionPanels.creaMieiPreferiti());
             case "I miei Ristoranti" -> parent.showPanel(SectionPanels.creaMieiRistoranti());
             case "Recensioni" -> {
