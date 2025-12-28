@@ -7,8 +7,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +47,14 @@ public class GestioneRecensioni {
     public static synchronized List<Recensione> getRecensioniUtente(String username) {
         return RECENSIONI.stream()
                 .filter(r -> r.getAutoreUsername().equalsIgnoreCase(username))
+                .collect(Collectors.toList());
+    }
+
+    public static synchronized List<Recensione> getRecensioniRistoranti(List<Integer> ristorantiIds) {
+        if (ristorantiIds == null || ristorantiIds.isEmpty()) return new ArrayList<>();
+        Set<Integer> set = new HashSet<>(ristorantiIds);
+        return RECENSIONI.stream()
+                .filter(r -> set.contains(r.getRistoranteId()))
                 .collect(Collectors.toList());
     }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.swing.*;
 
 import theknife.controller.GestioneRecensioni;
+import theknife.controller.GestioneRistoranti;
 import theknife.gui.components.SectionPanels;
 import theknife.model.Recensione;
 
@@ -60,10 +61,31 @@ public class ReviewsPanelFactory {
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
         panel.add(title, BorderLayout.NORTH);
 
-        JPanel ph = new JPanel();
-        ph.setBackground(Color.WHITE);
-        ph.add(new JLabel("Qui vedrai le recensioni dei tuoi ristoranti."));
-        panel.add(ph, BorderLayout.CENTER);
+        List<Integer> ids =
+                GestioneRistoranti.getRistorantiIdsProprietario(SectionPanels.CURRENT_USERNAME);
+        List<Recensione> ricevute = GestioneRecensioni.getRecensioniRistoranti(ids);
+
+        if (ricevute.isEmpty()) {
+            JPanel ph = new JPanel();
+            ph.setBackground(Color.WHITE);
+            ph.add(new JLabel("Nessuna recensione per i tuoi ristoranti."));
+            panel.add(ph, BorderLayout.CENTER);
+            return panel;
+        }
+
+        JPanel list = new JPanel();
+        list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
+        list.setBackground(Color.WHITE);
+
+        for (Recensione r : ricevute) {
+            list.add(ReviewComponents.cardRecensione(r, true));
+            list.add(Box.createVerticalStrut(10));
+        }
+
+        JScrollPane scroll = new JScrollPane(list);
+        scroll.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        panel.add(scroll, BorderLayout.CENTER);
 
         return panel;
     }
