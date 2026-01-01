@@ -13,7 +13,7 @@ public class RegisterFrame extends JFrame {
     public RegisterFrame() {
         setTitle("TheKnife - Registrazione");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new GridLayout(7, 2, 5, 5));
+        setLayout(new GridLayout(8, 2, 5, 5));
 
         add(new JLabel("Nome:"));
         JTextField nomeField = new JTextField();
@@ -22,6 +22,10 @@ public class RegisterFrame extends JFrame {
         add(new JLabel("Cognome:"));
         JTextField cognomeField = new JTextField();
         add(cognomeField);
+
+        add(new JLabel("Citta di residenza:"));
+        JTextField residenzaField = new JTextField();
+        add(residenzaField);
 
         add(new JLabel("Username:"));
         JTextField usernameField = new JTextField();
@@ -43,6 +47,7 @@ public class RegisterFrame extends JFrame {
         confermaButton.addActionListener(e -> {
             String nome = nomeField.getText().trim();
             String cognome = cognomeField.getText().trim();
+            String residenza = residenzaField.getText().trim();
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
             String ruolo = (String) ruoloBox.getSelectedItem();
@@ -52,12 +57,17 @@ public class RegisterFrame extends JFrame {
                 return;
             }
 
+            if ("cliente".equalsIgnoreCase(ruolo) && residenza.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Inserisci la citta di residenza.", "Errore", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             if (usernameEsistente(username)) {
                 JOptionPane.showMessageDialog(this, "Username già registrato!", "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            if (salvaUtente(nome, cognome, username, password, ruolo)) {
+            if (salvaUtente(nome, cognome, residenza, username, password, ruolo)) {
                 JOptionPane.showMessageDialog(this, "Registrazione completata!\nOra puoi effettuare il login.",
                         "Successo", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
@@ -92,13 +102,13 @@ public class RegisterFrame extends JFrame {
         return false;
     }
 
-    private boolean salvaUtente(String nome, String cognome, String username, String password, String ruolo) {
+    private boolean salvaUtente(String nome, String cognome, String residenza, String username, String password, String ruolo) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(PATH_UTENTI, true))) {
             String hashedPassword = hashPassword(password);
 
             // ⭐ AGGIUNTA COLONNA PREFERITI VUOTA ("")
-            bw.write(String.format("%s,%s,%s,%s,%s,%s%n",
-                    nome, cognome, username, hashedPassword, ruolo, ""));
+            bw.write(String.format("%s,%s,%s,%s,%s,%s,%s%n",
+                    nome, cognome, username, hashedPassword, ruolo, residenza, ""));
             return true;
 
         } catch (IOException e) {

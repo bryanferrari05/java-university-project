@@ -139,7 +139,7 @@ public class RestaurantDetailsFrame extends JFrame {
 
             while ((line = br.readLine()) != null) {
 
-                String[] campi = line.split(",");
+                String[] campi = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
                 // Salta l'intestazione
                 if (line.startsWith("nome,")) {
@@ -156,8 +156,13 @@ public class RestaurantDetailsFrame extends JFrame {
                                     .reduce((a, b) -> a + "-" + b)
                                     .orElse("");
 
-                    line = String.format("%s,%s,%s,%s,%s,%s",
-                            campi[0], campi[1], campi[2], campi[3], campi[4], preferitiStr);
+                    String residenza = "";
+                    if (campi.length >= 7) {
+                        residenza = campi[5];
+                    }
+
+                    line = String.format("%s,%s,%s,%s,%s,%s,%s",
+                            campi[0], campi[1], campi[2], campi[3], campi[4], residenza, preferitiStr);
                 }
 
                 sb.append(line).append("\n");

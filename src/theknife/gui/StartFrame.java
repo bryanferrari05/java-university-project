@@ -61,7 +61,8 @@ public class StartFrame extends JFrame {
                 "",               // password fittizia
                 "Ospite",         // nome
                 "",               // cognome
-                "ospite"          // ruolo
+                "ospite",         // ruolo
+                ""                // residenza
         );
 
         new HomeFrame(guest);

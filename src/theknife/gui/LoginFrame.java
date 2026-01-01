@@ -88,7 +88,7 @@ public class LoginFrame extends JFrame {
                 // salta intestazione CSV
                 if (line.startsWith("nome,")) continue;
 
-                String[] campi = line.split(",");
+                String[] campi = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
                 if (campi.length >= 5) {
                     String csvNome     = campi[0].trim();
@@ -97,14 +97,23 @@ public class LoginFrame extends JFrame {
                     String csvHash     = campi[3].trim();
                     String csvRuolo    = campi[4].trim();
 
+                    String csvResidenza = "";
+                    String preferitiRaw = "";
+                    if (campi.length >= 7) {
+                        csvResidenza = campi[5].trim();
+                        preferitiRaw = campi[6].trim();
+                    } else if (campi.length >= 6) {
+                        preferitiRaw = campi[5].trim();
+                    }
+
                     if (csvUsername.equals(username) && csvHash.equals(hash)) {
 
                         // ⭐ CREA L'UTENTE COMPLETO
-                        User u = new User(csvUsername, csvHash, csvNome, csvCognome, csvRuolo);
+                        User u = new User(csvUsername, csvHash, csvNome, csvCognome, csvRuolo, csvResidenza);
 
                         // ⭐ CARICA I PREFERITI (colonna 6)
-                        if (campi.length >= 6 && !campi[5].trim().isEmpty()) {
-                            String[] pref = campi[5].trim().split("-");
+                        if (!preferitiRaw.isEmpty()) {
+                            String[] pref = preferitiRaw.split("-");
                             for (String p : pref) {
                                 try {
                                     u.aggiungiPreferito(Integer.parseInt(p));

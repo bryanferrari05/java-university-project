@@ -42,7 +42,6 @@ public class SearchPanelFactory {
         });
         JCheckBox deliveryBox = new JCheckBox("Delivery disponibile");
         JCheckBox prenotaBox = new JCheckBox("Prenotazione online");
-        JTextField distanzaField = new JTextField("10", 5);
 
         c.gridx = 0; c.gridy = 0; filters.add(new JLabel("Nome:"), c);
         c.gridx = 1; filters.add(nomeField, c);
@@ -56,8 +55,6 @@ public class SearchPanelFactory {
 
         c.gridx = 0; c.gridy = 2; filters.add(new JLabel("Stelle minime:"), c);
         c.gridx = 1; filters.add(stelleBox, c);
-        c.gridx = 2; filters.add(new JLabel("Raggio (km):"), c);
-        c.gridx = 3; filters.add(distanzaField, c);
 
         c.gridx = 0; c.gridy = 3; filters.add(deliveryBox, c);
         c.gridx = 1; filters.add(prenotaBox, c);
@@ -98,8 +95,6 @@ public class SearchPanelFactory {
 
             List<Ristorante> tutti = RistoranteRepository.getRistoranti();
             List<Ristorante> risultati = new ArrayList<>();
-            Double[] centro = getCityCenter(tutti, citta);
-            double raggioKm = parseRadiusKm(distanzaField.getText());
             Integer stelleMinime = parseMinStars((String) stelleBox.getSelectedItem());
 
             for (Ristorante r : tutti) {
@@ -112,11 +107,6 @@ public class SearchPanelFactory {
                 if (prenota && !r.isPrenotazione()) ok = false;
                 if (!"Qualsiasi".equals(fascia) && !priceMatchesRange(r.getFasciaPrezzo(), fascia)) ok = false;
                 if (stelleMinime != null && r.getStarCount() < stelleMinime) ok = false;
-                if (raggioKm > 0 && centro[0] != null && centro[1] != null) {
-                    double dist = haversineKm(centro[0], centro[1], r.getLatitude(), r.getLongitude());
-                    if (dist > raggioKm) ok = false;
-                }
-
                 if (ok) risultati.add(r);
             }
 
@@ -263,32 +253,6 @@ public class SearchPanelFactory {
                 "OK", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private static Double[] getCityCenter(List<Ristorante> tutti, String citta) {
-        double sumLat = 0.0;
-        double sumLon = 0.0;
-        int count = 0;
-        for (Ristorante r : tutti) {
-            if (r.getCitta().toLowerCase().contains(citta)) {
-                sumLat += r.getLatitude();
-                sumLon += r.getLongitude();
-                count++;
-            }
-        }
-        if (count == 0) return new Double[]{null, null};
-        return new Double[]{sumLat / count, sumLon / count};
-    }
-
-    private static double parseRadiusKm(String text) {
-        if (text == null) return 0.0;
-        String trimmed = text.trim();
-        if (trimmed.isEmpty()) return 0.0;
-        try {
-            return Double.parseDouble(trimmed.replace(",", "."));
-        } catch (NumberFormatException e) {
-            return 0.0;
-        }
-    }
-
     private static Integer parseMinStars(String selection) {
         if (selection == null || selection.equals("Qualsiasi")) return null;
         String digits = selection.replace("+", "").trim();
@@ -336,13 +300,5 @@ public class SearchPanelFactory {
         return count;
     }
 
-    private static double haversineKm(double lat1, double lon1, double lat2, double lon2) {
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return 6371.0 * c;
-    }
+    
 }
