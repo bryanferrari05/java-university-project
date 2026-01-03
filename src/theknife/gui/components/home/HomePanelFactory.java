@@ -21,7 +21,7 @@ public class HomePanelFactory {
         String sottotitolo;
 
         boolean isGuest = user == null || user.getRuolo().equalsIgnoreCase("ospite");
-        boolean isCliente = !isGuest && user.getRuolo().equalsIgnoreCase("cliente");
+        boolean hasCity = user != null && user.getResidenza() != null && !user.getResidenza().trim().isEmpty();
 
         if (isGuest) {
             titolo = "Benvenuto in TheKnife!";
@@ -51,7 +51,7 @@ public class HomePanelFactory {
         center.add(Box.createVerticalStrut(20));
         center.add(subtitleLabel);
 
-        if (isCliente) {
+        if (hasCity) {
             JPanel nearby = creaRistorantiCitta(user.getResidenza());
             if (nearby != null) {
                 center.add(Box.createVerticalStrut(30));
@@ -67,12 +67,14 @@ public class HomePanelFactory {
     private static JPanel creaRistorantiCitta(String residenza) {
         if (residenza == null || residenza.trim().isEmpty()) return null;
 
-        String city = residenza.trim().toLowerCase();
+        String city = normalizeCity(residenza);
+        String cityPrefix = city.length() >= 4 ? city.substring(0, 4) : city;
         java.util.List<Ristorante> tutti = RistoranteRepository.getRistoranti();
         java.util.List<Ristorante> risultati = new java.util.ArrayList<>();
 
         for (Ristorante r : tutti) {
-            if (r.getCitta() != null && r.getCitta().toLowerCase().contains(city)) {
+            String rCity = normalizeCity(r.getCitta());
+            if (!rCity.isEmpty() && (rCity.contains(city) || rCity.contains(cityPrefix))) {
                 risultati.add(r);
                 if (risultati.size() == 6) break;
             }
@@ -132,5 +134,12 @@ public class HomePanelFactory {
 
         wrapper.add(grid, BorderLayout.SOUTH);
         return wrapper;
+    }
+
+    private static String normalizeCity(String text) {
+        if (text == null) return "";
+        String lower = text.trim().toLowerCase();
+        // Keep ASCII letters only for a simple, robust match.
+        return lower.replaceAll("[^a-z]", " ").replaceAll("\\s+", " ").trim();
     }
 }

@@ -90,25 +90,28 @@ public class RestaurantDetailsFrame extends JFrame {
         footer.setBackground(Color.WHITE);
 
         // ⭐ BOTTONE PREFERITI DINAMICO
-        JButton preferitiBtn = new JButton();
-        preferitiBtn.setBackground(new Color(230, 57, 70));
-        preferitiBtn.setForeground(Color.WHITE);
-        aggiornaBottone(preferitiBtn);
+        boolean isGuest = user == null || user.getRuolo().equalsIgnoreCase("ospite");
 
-        preferitiBtn.addActionListener(e -> {
-            if (user.isPreferito(restaurantId)) {
-                user.rimuoviPreferito(restaurantId);
-            } else {
-                user.aggiungiPreferito(restaurantId);
-            }
-            salvaPreferitiNelCSV();
+        if (!isGuest) {
+            JButton preferitiBtn = new JButton();
+            preferitiBtn.setBackground(new Color(230, 57, 70));
+            preferitiBtn.setForeground(Color.WHITE);
             aggiornaBottone(preferitiBtn);
-        });
+            preferitiBtn.addActionListener(e -> {
+                if (user.isPreferito(restaurantId)) {
+                    user.rimuoviPreferito(restaurantId);
+                } else {
+                    user.aggiungiPreferito(restaurantId);
+                }
+                salvaPreferitiNelCSV();
+                aggiornaBottone(preferitiBtn);
+            });
+            footer.add(preferitiBtn);
+        }
 
         JButton closeBtn = new JButton("Chiudi");
         closeBtn.addActionListener(e -> dispose());
 
-        footer.add(preferitiBtn);
         footer.add(closeBtn);
 
         container.add(footer, BorderLayout.SOUTH);
@@ -157,7 +160,7 @@ public class RestaurantDetailsFrame extends JFrame {
                                     .orElse("");
 
                     String residenza = "";
-                    if (campi.length >= 7) {
+                    if (campi.length >= 6) {
                         residenza = campi[5];
                     }
 

@@ -144,34 +144,31 @@ public class SearchPanelFactory {
                         new RestaurantDetailsFrame(SectionPanels.CURRENT_USER, id, r);
                     });
 
-                    JButton recensioneBtn = new JButton("Lascia recensione");
-                    recensioneBtn.addActionListener(ev -> {
-                        if (SectionPanels.CURRENT_USER == null
-                                || "ospite".equalsIgnoreCase(SectionPanels.CURRENT_ROLE)) {
-                            JOptionPane.showMessageDialog(panel,
-                                    "Per lasciare una recensione devi accedere.",
-                                    "Accesso richiesto", JOptionPane.INFORMATION_MESSAGE);
-                            return;
-                        }
-                        int ristoranteId = RistoranteRepository.getIdByRistorante(r);
-                        if (ristoranteId < 0) {
-                            JOptionPane.showMessageDialog(panel,
-                                    "Impossibile trovare il ristorante selezionato.",
-                                    "Errore", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                        if (GestioneRecensioni.ristoranteHaRaggiuntoLimite(ristoranteId)) {
-                            JOptionPane.showMessageDialog(panel,
-                                    "Questo ristorante ha gia raggiunto il limite di 2 recensioni.",
-                                    "Info", JOptionPane.INFORMATION_MESSAGE);
-                            return;
-                        }
-                        apriDialogRecensione(panel, r, ristoranteId);
-                    });
+                    boolean isGuest = SectionPanels.CURRENT_USER == null
+                            || "ospite".equalsIgnoreCase(SectionPanels.CURRENT_ROLE);
 
                     JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
                     actions.setBackground(Color.WHITE);
-                    actions.add(recensioneBtn);
+                    if (!isGuest) {
+                        JButton recensioneBtn = new JButton("Lascia recensione");
+                        recensioneBtn.addActionListener(ev -> {
+                            int ristoranteId = RistoranteRepository.getIdByRistorante(r);
+                            if (ristoranteId < 0) {
+                                JOptionPane.showMessageDialog(panel,
+                                        "Impossibile trovare il ristorante selezionato.",
+                                        "Errore", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+                            if (GestioneRecensioni.ristoranteHaRaggiuntoLimite(ristoranteId)) {
+                                JOptionPane.showMessageDialog(panel,
+                                        "Questo ristorante ha gia raggiunto il limite di 2 recensioni.",
+                                        "Info", JOptionPane.INFORMATION_MESSAGE);
+                                return;
+                            }
+                            apriDialogRecensione(panel, r, ristoranteId);
+                        });
+                        actions.add(recensioneBtn);
+                    }
                     actions.add(vediBtn);
 
                     card.add(actions, BorderLayout.EAST);

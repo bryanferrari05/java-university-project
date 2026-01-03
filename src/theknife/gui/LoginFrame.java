@@ -103,7 +103,7 @@ public class LoginFrame extends JFrame {
                         csvResidenza = campi[5].trim();
                         preferitiRaw = campi[6].trim();
                     } else if (campi.length >= 6) {
-                        preferitiRaw = campi[5].trim();
+                        csvResidenza = campi[5].trim();
                     }
 
                     if (csvUsername.equals(username) && csvHash.equals(hash)) {

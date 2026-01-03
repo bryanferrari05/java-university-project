@@ -1,7 +1,17 @@
 package theknife.gui;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import theknife.model.User;
 import theknife.utils.Theme;
@@ -52,31 +62,55 @@ public class StartFrame extends JFrame {
             new RegisterFrame();
         });
 
-            guestBtn.addActionListener(e -> {
-        dispose();
+        guestBtn.addActionListener(e -> {
+            String city = JOptionPane.showInputDialog(
+                    this,
+                    "Inserisci la tua citta (es. Milan):",
+                    "Accesso come Ospite",
+                    JOptionPane.QUESTION_MESSAGE
+            );
+            if (city == null) {
+                return;
+            }
 
-        // ⭐ Creiamo un utente fittizio "Ospite"
-        User guest = new User(
-                "Ospite",         // username
-                "",               // password fittizia
-                "Ospite",         // nome
-                "",               // cognome
-                "ospite",         // ruolo
-                ""                // residenza
-        );
+            city = city.trim();
+            if (city.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Inserisci una citta valida per continuare.",
+                        "Accesso come Ospite",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
 
-        new HomeFrame(guest);
-    });
+            dispose();
 
-        c.gridy = 0; buttons.add(loginBtn, c);
-        c.gridy = 1; buttons.add(registerBtn, c);
-        c.gridy = 2; buttons.add(guestBtn, c);
+            // Creiamo un utente fittizio "Ospite"
+            User guest = new User(
+                    "Ospite",         // username
+                    "",               // password fittizia
+                    "Ospite",         // nome
+                    "",               // cognome
+                    "ospite",         // ruolo
+                    city              // residenza
+            );
+
+            new HomeFrame(guest);
+        });
+
+        c.gridy = 0;
+        buttons.add(loginBtn, c);
+        c.gridy = 1;
+        buttons.add(registerBtn, c);
+        c.gridy = 2;
+        buttons.add(guestBtn, c);
 
         add(buttons, BorderLayout.SOUTH);
 
         setVisible(true);
 
-        pack();                       
+        pack();
         setMinimumSize(new Dimension(520, 360));
         setLocationRelativeTo(null);
     }
