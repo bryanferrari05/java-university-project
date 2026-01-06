@@ -38,7 +38,7 @@ public class ReviewsPanelFactory {
         list.setBackground(Color.WHITE);
 
         for (Recensione r : mie) {
-            list.add(ReviewComponents.cardRecensione(r, false));
+            list.add(ReviewComponents.cardRecensione(r, false, true));
             list.add(Box.createVerticalStrut(10));
         }
 
@@ -78,7 +78,7 @@ public class ReviewsPanelFactory {
         list.setBackground(Color.WHITE);
 
         for (Recensione r : ricevute) {
-            list.add(ReviewComponents.cardRecensione(r, true));
+            list.add(ReviewComponents.cardRecensione(r, true, false));
             list.add(Box.createVerticalStrut(10));
         }
 

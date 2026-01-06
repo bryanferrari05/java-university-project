@@ -71,6 +71,16 @@ public class GestioneRecensioni {
         }
     }
 
+    public static synchronized boolean rimuoviRecensione(Recensione recensione, String username) {
+        if (recensione == null || username == null) return false;
+        if (!recensione.getAutoreUsername().equalsIgnoreCase(username)) return false;
+        boolean removed = RECENSIONI.remove(recensione);
+        if (removed) {
+            saveToCsv();
+        }
+        return removed;
+    }
+
     public static synchronized double getMediaRistorante(int ristoranteId) {
         IntSummaryStatistics stats = RECENSIONI.stream()
                 .filter(r -> r.getRistoranteId() == ristoranteId)

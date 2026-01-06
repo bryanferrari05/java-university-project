@@ -51,6 +51,52 @@ public class RistoranteRepository {
         return lista;
     }
 
+    public static List<Ristorante> getRistorantiByCityLimit(String residenza, int limit) {
+        List<Ristorante> risultati = new ArrayList<>();
+        if (residenza == null || residenza.trim().isEmpty() || limit <= 0) return risultati;
+
+        String city = normalizeCity(residenza);
+        String cityPrefix = city.length() >= 4 ? city.substring(0, 4) : city;
+
+        try (BufferedReader br = new BufferedReader(new FileReader("data/ristoranti.csv"))) {
+            String line = br.readLine(); // salta header
+            while ((line = br.readLine()) != null) {
+                String[] c = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                if (c.length < 14) continue;
+
+                String location = c[2].replace("\"", "").trim();
+                String rCity = normalizeCity(location);
+                if (!rCity.isEmpty() && (rCity.contains(city) || rCity.contains(cityPrefix))) {
+                    String nome        = c[0].replace("\"", "").trim();
+                    String address     = c[1].replace("\"", "").trim();
+                    String price       = c[3].replace("\"", "").trim();
+                    String cuisine     = c[4].replace("\"", "").trim();
+                    double longitude   = Double.parseDouble(c[5]);
+                    double latitude    = Double.parseDouble(c[6]);
+                    String phone       = c[7].replace("\"", "").trim();
+                    String url         = c[8].replace("\"", "").trim();
+                    String website     = c[9].replace("\"", "").trim();
+                    String award       = c[10].replace("\"", "").trim();
+                    String greenStar   = c[11].replace("\"", "").trim();
+                    String facilities  = c[12].replace("\"", "").trim();
+                    String description = c[13].replace("\"", "").trim();
+
+                    risultati.add(new Ristorante(
+                            nome, address, location, price, cuisine,
+                            longitude, latitude, phone, url, website,
+                            award, greenStar, facilities, description
+                    ));
+
+                    if (risultati.size() >= limit) break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return risultati;
+    }
+
     public static int getIdByRistorante(Ristorante target) {
         List<Ristorante> lista = getRistoranti();
 
@@ -61,5 +107,11 @@ public class RistoranteRepository {
             }
         }
         return -1;
+    }
+
+    private static String normalizeCity(String text) {
+        if (text == null) return "";
+        String lower = text.trim().toLowerCase();
+        return lower.replaceAll("[^a-z]", " ").replaceAll("\\s+", " ").trim();
     }
 }

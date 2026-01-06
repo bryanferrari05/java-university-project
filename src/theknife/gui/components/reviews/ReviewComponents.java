@@ -10,7 +10,7 @@ import theknife.model.Recensione;
 
 public class ReviewComponents {
 
-    public static JPanel cardRecensione(Recensione r, boolean consentiRisposta) {
+    public static JPanel cardRecensione(Recensione r, boolean consentiRisposta, boolean consentiEliminazione) {
 
         JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setBackground(Color.WHITE);
@@ -74,25 +74,73 @@ public class ReviewComponents {
                     BorderFactory.createEmptyBorder(6, 8, 6, 8)
             ));
             bottom.add(rep, BorderLayout.CENTER);
-        } else if (consentiRisposta) {
-            JButton rispondi = new JButton("Rispondi");
-            rispondi.addActionListener(e -> {
-                String risposta = chiediTesto("Scrivi la risposta (una sola, definitiva):");
-                if (risposta != null && !risposta.isBlank()) {
-                    GestioneRecensioni.rispondiRistoratore(
-                            r.getRistoranteId(),
-                            r.getAutoreUsername(),
-                            risposta.trim()
-                    );
-                    JOptionPane.showMessageDialog(p, "Risposta inviata", "OK",
-                            JOptionPane.INFORMATION_MESSAGE);
+        } else if (consentiRisposta || consentiEliminazione) {
+            JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+            actions.setBackground(Color.WHITE);
 
-                    Window w = SwingUtilities.getWindowAncestor(p);
-                    if (w != null) w.dispose();
-                    apriDialogRecensioni(r.getRistoranteId(), r.getRistoranteNome());
-                }
-            });
-            bottom.add(rispondi, BorderLayout.EAST);
+            if (consentiEliminazione) {
+                JButton elimina = new JButton("Elimina");
+                elimina.addActionListener(e -> {
+                    int scelta = JOptionPane.showConfirmDialog(
+                            p,
+                            "Vuoi eliminare questa recensione?",
+                            "Conferma eliminazione",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (scelta == JOptionPane.YES_OPTION) {
+                        boolean removed = GestioneRecensioni.rimuoviRecensione(
+                                r,
+                                SectionPanels.CURRENT_USERNAME
+                        );
+                        if (!removed) {
+                            JOptionPane.showMessageDialog(
+                                    p,
+                                    "Impossibile eliminare la recensione.",
+                                    "Errore",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                            return;
+                        }
+
+                        JOptionPane.showMessageDialog(p, "Recensione eliminata", "OK",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        if (SectionPanels.NAVIGATE != null) {
+                            SectionPanels.NAVIGATE.accept(ReviewsPanelFactory.creaRecensioniCliente());
+                        } else {
+                            Container parent = p.getParent();
+                            if (parent != null) {
+                                parent.remove(p);
+                                parent.revalidate();
+                                parent.repaint();
+                            }
+                        }
+                    }
+                });
+                actions.add(elimina);
+            }
+
+            if (consentiRisposta) {
+                JButton rispondi = new JButton("Rispondi");
+                rispondi.addActionListener(e -> {
+                    String risposta = chiediTesto("Scrivi la risposta (una sola, definitiva):");
+                    if (risposta != null && !risposta.isBlank()) {
+                        GestioneRecensioni.rispondiRistoratore(
+                                r.getRistoranteId(),
+                                r.getAutoreUsername(),
+                                risposta.trim()
+                        );
+                        JOptionPane.showMessageDialog(p, "Risposta inviata", "OK",
+                                JOptionPane.INFORMATION_MESSAGE);
+
+                        Window w = SwingUtilities.getWindowAncestor(p);
+                        if (w != null) w.dispose();
+                        apriDialogRecensioni(r.getRistoranteId(), r.getRistoranteNome());
+                    }
+                });
+                actions.add(rispondi);
+            }
+
+            bottom.add(actions, BorderLayout.EAST);
         }
 
         p.add(bottom, BorderLayout.SOUTH);
@@ -130,7 +178,7 @@ public class ReviewComponents {
             container.add(ph, BorderLayout.CENTER);
         } else {
             for (Recensione r : elenco) {
-                list.add(cardRecensione(r, consentiRisposta));
+                list.add(cardRecensione(r, consentiRisposta, false));
                 list.add(Box.createVerticalStrut(10));
             }
             JScrollPane scroll = new JScrollPane(list);

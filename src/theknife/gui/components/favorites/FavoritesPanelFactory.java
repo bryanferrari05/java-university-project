@@ -76,7 +76,7 @@ public class FavoritesPanelFactory {
         loading.setLayout(new BoxLayout(loading, BoxLayout.Y_AXIS));
         JLabel loadingLabel = new JLabel("Caricamento preferiti...", SwingConstants.CENTER);
         loadingLabel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-        Spinner spinner = new Spinner(new Color(230, 57, 70), 46);
+        Spinner spinner = new Spinner(new Color(230, 57, 70), 20);
         spinner.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         loading.add(Box.createVerticalStrut(24));
         loading.add(spinner);
@@ -181,7 +181,10 @@ public class FavoritesPanelFactory {
             this.color = color;
             this.size = size;
             setOpaque(false);
-            setPreferredSize(new Dimension(size, size));
+            Dimension dim = new Dimension(size, size);
+            setPreferredSize(dim);
+            setMinimumSize(dim);
+            setMaximumSize(dim);
             timer = new Timer(40, e -> {
                 angle = (angle + 12) % 360;
                 repaint();
@@ -200,12 +203,12 @@ public class FavoritesPanelFactory {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            int pad = 6;
+            int pad = 3;
             int d = Math.min(getWidth(), getHeight()) - pad * 2;
             int x = (getWidth() - d) / 2;
             int y = (getHeight() - d) / 2;
             g2.setColor(color);
-            g2.setStroke(new BasicStroke(4.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2.drawArc(x, y, d, d, angle, 280);
             g2.dispose();
         }
