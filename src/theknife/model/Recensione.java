@@ -5,8 +5,8 @@ public class Recensione {
     private final String ristoranteNome;
     private final String ristoranteCitta;
     private final String autoreUsername;
-    private final int stelle; // 1..5
-    private final String testo;
+    private int stelle; // 1..5
+    private String testo;
     private String rispostaRistoratore; // opzionale, una sola risposta
 
     public Recensione(int ristoranteId, String ristoranteNome, String ristoranteCitta,
@@ -42,6 +42,14 @@ public class Recensione {
 
     public String getTesto() {
         return testo;
+    }
+
+    public void setStelle(int stelle) {
+        this.stelle = stelle;
+    }
+
+    public void setTesto(String testo) {
+        this.testo = testo;
     }
 
     public String getRispostaRistoratore() {

@@ -21,19 +21,17 @@ public class GestioneRecensioni {
 
     private static final List<Recensione> RECENSIONI = new ArrayList<>();
     private static final String CSV_PATH = "data/recensioni.csv";
-    private static final int MAX_RECENSIONI_PER_RISTORANTE = 2;
 
     static {
         loadFromCsv();
     }
 
     public static synchronized boolean ristoranteHaRaggiuntoLimite(int ristoranteId) {
-        return getConteggioRistorante(ristoranteId) >= MAX_RECENSIONI_PER_RISTORANTE;
+        return false;
     }
 
     public static synchronized void aggiungiRecensione(int ristoranteId, String ristoranteNome, String ristoranteCitta,
                                                        String username, int stelle, String testo) {
-        if (ristoranteHaRaggiuntoLimite(ristoranteId)) return;
         RECENSIONI.add(new Recensione(ristoranteId, ristoranteNome, ristoranteCitta, username, stelle, testo));
         saveToCsv();
     }
@@ -79,6 +77,20 @@ public class GestioneRecensioni {
             saveToCsv();
         }
         return removed;
+    }
+
+    public static synchronized boolean aggiornaRecensione(Recensione recensione, String username,
+                                                          int stelle, String testo) {
+        if (recensione == null || username == null) return false;
+        if (!recensione.getAutoreUsername().equalsIgnoreCase(username)) return false;
+        if (!RECENSIONI.contains(recensione)) return false;
+        if (stelle < 1 || stelle > 5) return false;
+        if (testo == null || testo.isBlank()) return false;
+
+        recensione.setStelle(stelle);
+        recensione.setTesto(testo);
+        saveToCsv();
+        return true;
     }
 
     public static synchronized double getMediaRistorante(int ristoranteId) {

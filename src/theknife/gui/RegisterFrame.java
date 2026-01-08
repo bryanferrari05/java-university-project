@@ -1,6 +1,8 @@
 package theknife.gui;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,8 +11,16 @@ import javax.swing.*;
 public class RegisterFrame extends JFrame {
 
     private static final String PATH_UTENTI = "data/utenti.csv";
+    private final StartFrame parent;
+    private boolean reopenParentOnClose = true;
 
     public RegisterFrame() {
+        this(null);
+    }
+
+    public RegisterFrame(StartFrame parent) {
+        this.parent = parent;
+
         setTitle("TheKnife - Registrazione");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(8, 2, 5, 5));
@@ -70,8 +80,9 @@ public class RegisterFrame extends JFrame {
             if (salvaUtente(nome, cognome, residenza, username, password, ruolo)) {
                 JOptionPane.showMessageDialog(this, "Registrazione completata!\nOra puoi effettuare il login.",
                         "Successo", JOptionPane.INFORMATION_MESSAGE);
+                reopenParentOnClose = false;
                 dispose();
-                new LoginFrame();
+                new LoginFrame(parent);
             } else {
                 JOptionPane.showMessageDialog(this, "Errore nel salvataggio dei dati.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
@@ -84,6 +95,14 @@ public class RegisterFrame extends JFrame {
         setMinimumSize(new Dimension(400, 350));
         setLocationRelativeTo(null);
 
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (reopenParentOnClose && parent != null && parent.isDisplayable()) {
+                    parent.setVisible(true);
+                }
+            }
+        });
     }
 
     private boolean usernameEsistente(String username) {

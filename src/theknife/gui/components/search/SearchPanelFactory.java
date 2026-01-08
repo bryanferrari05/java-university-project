@@ -141,7 +141,8 @@ public class SearchPanelFactory {
                     JButton vediBtn = new JButton("Visualizza dettagli");
                     vediBtn.addActionListener(ev -> {
                         int id = RistoranteRepository.getIdByRistorante(r);
-                        new RestaurantDetailsFrame(SectionPanels.CURRENT_USER, id, r);
+                        Window parentWindow = SwingUtilities.getWindowAncestor(panel);
+                        new RestaurantDetailsFrame(parentWindow, SectionPanels.CURRENT_USER, id, r);
                     });
 
                     boolean isGuest = SectionPanels.CURRENT_USER == null
@@ -157,12 +158,6 @@ public class SearchPanelFactory {
                                 JOptionPane.showMessageDialog(panel,
                                         "Impossibile trovare il ristorante selezionato.",
                                         "Errore", JOptionPane.ERROR_MESSAGE);
-                                return;
-                            }
-                            if (GestioneRecensioni.ristoranteHaRaggiuntoLimite(ristoranteId)) {
-                                JOptionPane.showMessageDialog(panel,
-                                        "Questo ristorante ha gia raggiunto il limite di 2 recensioni.",
-                                        "Info", JOptionPane.INFORMATION_MESSAGE);
                                 return;
                             }
                             apriDialogRecensione(panel, r, ristoranteId);
@@ -226,13 +221,6 @@ public class SearchPanelFactory {
             JOptionPane.showMessageDialog(parent,
                     "Inserisci il testo della recensione.",
                     "Errore", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        if (GestioneRecensioni.ristoranteHaRaggiuntoLimite(ristoranteId)) {
-            JOptionPane.showMessageDialog(parent,
-                    "Questo ristorante ha gia raggiunto il limite di 2 recensioni.",
-                    "Info", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 

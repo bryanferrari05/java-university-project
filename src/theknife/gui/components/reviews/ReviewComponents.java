@@ -10,7 +10,8 @@ import theknife.model.Recensione;
 
 public class ReviewComponents {
 
-    public static JPanel cardRecensione(Recensione r, boolean consentiRisposta, boolean consentiEliminazione) {
+    public static JPanel cardRecensione(Recensione r, boolean consentiRisposta,
+                                        boolean consentiEliminazione, boolean consentiModifica) {
 
         JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setBackground(Color.WHITE);
@@ -74,9 +75,56 @@ public class ReviewComponents {
                     BorderFactory.createEmptyBorder(6, 8, 6, 8)
             ));
             bottom.add(rep, BorderLayout.CENTER);
-        } else if (consentiRisposta || consentiEliminazione) {
+        } else if (consentiRisposta || consentiEliminazione || consentiModifica) {
             JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
             actions.setBackground(Color.WHITE);
+
+            if (consentiModifica) {
+                JButton modifica = new JButton("Modifica");
+                modifica.addActionListener(e -> {
+                    Integer nuovoVoto = chiediStelle(p, r.getStelle());
+                    String nuovoTesto = chiediTestoArea(p, "Modifica recensione:", r.getTesto());
+
+                    if (nuovoVoto == null || nuovoTesto == null) return;
+                    nuovoTesto = nuovoTesto.trim();
+                    if (nuovoTesto.isBlank()) {
+                        JOptionPane.showMessageDialog(
+                                p,
+                                "Inserisci il testo della recensione.",
+                                "Errore",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+
+                    boolean updated = GestioneRecensioni.aggiornaRecensione(
+                            r,
+                            SectionPanels.CURRENT_USERNAME,
+                            nuovoVoto,
+                            nuovoTesto
+                    );
+
+                    if (!updated) {
+                        JOptionPane.showMessageDialog(
+                                p,
+                                "Impossibile modificare la recensione.",
+                                "Errore",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+
+                    rating.setText("Stelle: " + r.getStelle() + "/5");
+                    body.setText(r.getTesto());
+                    JOptionPane.showMessageDialog(p, "Recensione modificata", "OK",
+                            JOptionPane.INFORMATION_MESSAGE);
+
+                    if (SectionPanels.NAVIGATE != null) {
+                        SectionPanels.NAVIGATE.accept(ReviewsPanelFactory.creaRecensioniCliente());
+                    }
+                });
+                actions.add(modifica);
+            }
 
             if (consentiEliminazione) {
                 JButton elimina = new JButton("Elimina");
@@ -178,7 +226,7 @@ public class ReviewComponents {
             container.add(ph, BorderLayout.CENTER);
         } else {
             for (Recensione r : elenco) {
-                list.add(cardRecensione(r, consentiRisposta, false));
+                list.add(cardRecensione(r, consentiRisposta, false, false));
                 list.add(Box.createVerticalStrut(10));
             }
             JScrollPane scroll = new JScrollPane(list);
@@ -199,5 +247,36 @@ public class ReviewComponents {
 
     private static String chiediTesto(String prompt) {
         return JOptionPane.showInputDialog(null, prompt, "");
+    }
+
+    private static Integer chiediStelle(Component parent, int corrente) {
+        JComboBox<String> stelleBox = new JComboBox<>(new String[]{"1", "2", "3", "4", "5"});
+        stelleBox.setSelectedItem(String.valueOf(corrente));
+        int result = JOptionPane.showConfirmDialog(
+                parent,
+                stelleBox,
+                "Seleziona stelle (1-5)",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+        if (result != JOptionPane.OK_OPTION) return null;
+        return Integer.parseInt((String) stelleBox.getSelectedItem());
+    }
+
+    private static String chiediTestoArea(Component parent, String titolo, String testoIniziale) {
+        JTextArea area = new JTextArea(6, 24);
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setText(testoIniziale);
+        JScrollPane scroll = new JScrollPane(area);
+        int result = JOptionPane.showConfirmDialog(
+                parent,
+                scroll,
+                titolo,
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+        if (result != JOptionPane.OK_OPTION) return null;
+        return area.getText();
     }
 }

@@ -7,6 +7,8 @@ import theknife.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.List;
 
@@ -14,11 +16,21 @@ public class RestaurantDetailsFrame extends JFrame {
 
     private final User user;
     private final int restaurantId;
+    private final Window parentWindow;
 
     public RestaurantDetailsFrame(User user, int restaurantId, Ristorante r) {
+        this(null, user, restaurantId, r);
+    }
 
+    public RestaurantDetailsFrame(Window parentWindow, User user, int restaurantId, Ristorante r) {
+
+        this.parentWindow = parentWindow;
         this.user = user;
         this.restaurantId = restaurantId;
+
+        if (this.parentWindow != null) {
+            this.parentWindow.setVisible(false);
+        }
 
         // ----- FINESTRA PRINCIPALE -----
         setTitle("Dettagli – " + r.getNome());
@@ -128,6 +140,17 @@ public class RestaurantDetailsFrame extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+
+        if (this.parentWindow != null) {
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    if (RestaurantDetailsFrame.this.parentWindow.isDisplayable()) {
+                        RestaurantDetailsFrame.this.parentWindow.setVisible(true);
+                    }
+                }
+            });
+        }
     }
 
     // --------------------- SALVATAGGIO PREFERITI ---------------------
@@ -245,6 +268,14 @@ public class RestaurantDetailsFrame extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
+
+        double media = GestioneRecensioni.getMediaRistorante(restaurantId);
+        int totale = GestioneRecensioni.getConteggioRistorante(restaurantId);
+        JLabel stats = new JLabel("Media stelle: " + media + "/5  |  Totale recensioni: " + totale);
+        stats.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        stats.setForeground(new Color(60, 60, 60));
+        stats.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
+        panel.add(stats);
 
         List<Recensione> recensioni = GestioneRecensioni.getRecensioniRistorante(restaurantId);
         if (recensioni.isEmpty()) {

@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -20,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
+import javax.swing.SwingUtilities;
 
 import theknife.gui.components.RestaurantDetailsFrame;
 import theknife.gui.components.SectionPanels;
@@ -91,10 +93,26 @@ public class FavoritesPanelFactory {
             protected List<Ristorante> doInBackground() {
                 List<Ristorante> tutti = RistoranteRepository.getRistoranti();
                 List<Ristorante> risultati = new ArrayList<>();
-                for (Integer id : preferiti) {
-                    if (id == null || id < 0 || id >= tutti.size()) continue;
-                    idsValid.add(id);
-                    risultati.add(tutti.get(id));
+                List<Integer> ordinati = new ArrayList<>(preferiti);
+                insertionSort(ordinati);
+
+                int maxId = ultimoIdValido(ordinati);
+                if (maxId <= 0) return risultati;
+
+                int limit = Math.min(maxId, tutti.size());
+                int targetIndex = 0;
+                for (int i = 1; i <= limit && targetIndex < ordinati.size(); i++) {
+                    Integer currentId = ordinati.get(targetIndex);
+                    if (currentId == null || currentId <= 0) {
+                        targetIndex++;
+                        i--;
+                        continue;
+                    }
+                    if (currentId == i) {
+                        idsValid.add(i);
+                        risultati.add(tutti.get(i - 1));
+                        targetIndex++;
+                    }
                 }
                 return risultati;
             }
@@ -141,7 +159,8 @@ public class FavoritesPanelFactory {
 
                             JButton dettagli = new JButton("Dettagli");
                             dettagli.addActionListener(e -> {
-                                new RestaurantDetailsFrame(user, id, r);
+                                Window parentWindow = SwingUtilities.getWindowAncestor(content);
+                                new RestaurantDetailsFrame(parentWindow, user, id, r);
                             });
 
                             card.add(dettagli, BorderLayout.EAST);
@@ -169,6 +188,33 @@ public class FavoritesPanelFactory {
         worker.execute();
 
         return panel;
+    }
+
+    private static void insertionSort(List<Integer> list) {
+        for (int i = 1; i < list.size(); i++) {
+            Integer key = list.get(i);
+            int j = i - 1;
+            while (j >= 0 && compareNullable(list.get(j), key) > 0) {
+                list.set(j + 1, list.get(j));
+                j--;
+            }
+            list.set(j + 1, key);
+        }
+    }
+
+    private static int compareNullable(Integer a, Integer b) {
+        if (a == null && b == null) return 0;
+        if (a == null) return 1;
+        if (b == null) return -1;
+        return Integer.compare(a, b);
+    }
+
+    private static int ultimoIdValido(List<Integer> list) {
+        for (int i = list.size() - 1; i >= 0; i--) {
+            Integer v = list.get(i);
+            if (v != null && v > 0) return v;
+        }
+        return -1;
     }
 
     private static class Spinner extends JPanel {

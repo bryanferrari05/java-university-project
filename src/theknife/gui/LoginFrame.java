@@ -1,6 +1,8 @@
 package theknife.gui;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.security.MessageDigest;
 import javax.swing.*;
@@ -11,8 +13,16 @@ import theknife.utils.Theme;
 public class LoginFrame extends JFrame {
 
     private static final String PATH_UTENTI = "data/utenti.csv";
+    private final StartFrame parent;
+    private boolean reopenParentOnClose = true;
 
     public LoginFrame() {
+        this(null);
+    }
+
+    public LoginFrame(StartFrame parent) {
+        this.parent = parent;
+
         setTitle("TheKnife - Login");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -58,6 +68,10 @@ public class LoginFrame extends JFrame {
             User user = verificaCredenziali(username, password);
 
             if (user != null) {
+                reopenParentOnClose = false;
+                if (parent != null) {
+                    parent.dispose();
+                }
                 dispose();
                 new HomeFrame(user); // ⭐ PASSIAMO L'UTENTE COMPLETO
             } else {
@@ -71,6 +85,15 @@ public class LoginFrame extends JFrame {
         pack();
         setMinimumSize(new Dimension(420, 350));
         setLocationRelativeTo(null);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (reopenParentOnClose && parent != null && parent.isDisplayable()) {
+                    parent.setVisible(true);
+                }
+            }
+        });
     }
 
     /**

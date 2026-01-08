@@ -54,12 +54,14 @@ public class StartFrame extends JFrame {
 
         loginBtn.addActionListener(e -> {
             // apre la finestra di login (che al successo apre HomeFrame)
-            new LoginFrame();
+            setVisible(false);
+            new LoginFrame(this);
         });
 
         registerBtn.addActionListener(e -> {
             // apre la finestra di registrazione (che, una volta completata, rimanda al login)
-            new RegisterFrame();
+            setVisible(false);
+            new RegisterFrame(this);
         });
 
         guestBtn.addActionListener(e -> {
