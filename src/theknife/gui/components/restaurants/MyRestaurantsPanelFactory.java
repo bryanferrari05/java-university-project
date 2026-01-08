@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.util.List;
 
 import theknife.gui.components.SectionPanels;
+import theknife.gui.components.reviews.ReviewComponents;
 import theknife.controller.GestioneRistoranti;
 
 public class MyRestaurantsPanelFactory {
@@ -28,13 +29,19 @@ public class MyRestaurantsPanelFactory {
                 GestioneRistoranti.getRistorantiProprietario(
                         SectionPanels.CURRENT_USERNAME
                 );
+        List<Integer> ids =
+                GestioneRistoranti.getRistorantiIdsProprietario(
+                        SectionPanels.CURRENT_USERNAME
+                );
 
         if (miei.isEmpty()) {
             JLabel msg = new JLabel("Non hai ancora inserito ristoranti.");
             msg.setAlignmentX(Component.CENTER_ALIGNMENT);
             content.add(msg);
         } else {
-            for (GestioneRistoranti.Ristorante r : miei) {
+            for (int i = 0; i < miei.size(); i++) {
+                GestioneRistoranti.Ristorante r = miei.get(i);
+                int ristoranteId = i < ids.size() ? ids.get(i) : -1;
 
                 JPanel card = new JPanel(new BorderLayout());
                 card.setBorder(BorderFactory.createCompoundBorder(
@@ -63,12 +70,16 @@ public class MyRestaurantsPanelFactory {
 
                 JButton recensioniBtn = new JButton("Visualizza recensioni");
                 recensioniBtn.addActionListener(e -> {
-                    JOptionPane.showMessageDialog(
-                            panel,
-                            "Visualizzazione recensioni di " + r.getNome(),
-                            "Info",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
+                    if (ristoranteId <= 0) {
+                        JOptionPane.showMessageDialog(
+                                panel,
+                                "Impossibile trovare il ristorante selezionato.",
+                                "Errore",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                    ReviewComponents.apriDialogRecensioni(ristoranteId, r.getNome());
                 });
 
                 card.add(recensioniBtn, BorderLayout.EAST);
