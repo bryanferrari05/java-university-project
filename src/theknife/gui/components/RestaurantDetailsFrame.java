@@ -286,6 +286,7 @@ public class RestaurantDetailsFrame extends JFrame {
             return panel;
         }
 
+        boolean isGuest = user == null || user.getRuolo().equalsIgnoreCase("ospite");
         for (Recensione r : recensioni) {
             JPanel card = new JPanel();
             card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -295,7 +296,8 @@ public class RestaurantDetailsFrame extends JFrame {
                     BorderFactory.createEmptyBorder(10, 12, 10, 12)
             ));
 
-            JLabel head = new JLabel("Utente: anonimo | Stelle: " + r.getStelle() + "/5");
+            String autore = isGuest ? "anonimo" : "@" + r.getAutoreUsername();
+            JLabel head = new JLabel("Utente: " + autore + " | Stelle: " + r.getStelle() + "/5");
             head.setFont(new Font("Segoe UI", Font.BOLD, 15));
             head.setForeground(new Color(40, 40, 40));
 
