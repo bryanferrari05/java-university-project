@@ -10,16 +10,33 @@ import javax.swing.*;
 import theknife.model.User;
 import theknife.utils.Theme;
 
+/**
+ * Login window that validates credentials and opens HomeFrame.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class LoginFrame extends JFrame {
 
+    /** CSV path for users. */
     private static final String PATH_UTENTI = "data/utenti.csv";
+    /** Parent start frame, if provided. */
     private final StartFrame parent;
+    /** Reopen parent when this window closes. */
     private boolean reopenParentOnClose = true;
 
+    /**
+     * Builds a login window without a parent.
+     */
     public LoginFrame() {
         this(null);
     }
 
+    /**
+     * Builds a login window with an optional parent.
+     *
+     * @param parent start frame to reopen on close
+     */
     public LoginFrame(StartFrame parent) {
         this.parent = parent;
 
@@ -97,8 +114,11 @@ public class LoginFrame extends JFrame {
     }
 
     /**
-     * Verifica username + password e, se sono giusti,
-     * CARICA l'oggetto User COMPLETO (con preferiti inclusi)
+     * Validates credentials and loads the full user object.
+     *
+     * @param username username
+     * @param password raw password
+     * @return user instance or null
      */
     private User verificaCredenziali(String username, String password) {
         String hash = hashPassword(password);
@@ -155,6 +175,12 @@ public class LoginFrame extends JFrame {
         return null;
     }
 
+    /**
+     * Hashes a password with SHA-256 when available.
+     *
+     * @param password raw password
+     * @return hash string or raw password on error
+     */
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

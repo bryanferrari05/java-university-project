@@ -7,12 +7,27 @@ import javax.swing.*;
 import theknife.gui.HomeFrame;
 import theknife.gui.StartFrame;
 
+/**
+ * Sidebar navigation menu for the main window.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class SidebarPanel extends JPanel {
 
+    /** Parent frame used for navigation. */
     private final HomeFrame parent;
+    /** Current user role. */
     private final String ruolo;
+    /** Currently selected menu label. */
     private JLabel selectedLabel;
 
+    /**
+     * Builds the sidebar for a specific user role.
+     *
+     * @param ruolo user role
+     * @param parent parent frame
+     */
     public SidebarPanel(String ruolo, HomeFrame parent) {
         this.ruolo = ruolo;
         this.parent = parent;
@@ -41,6 +56,12 @@ public class SidebarPanel extends JPanel {
         }
     }
 
+    /**
+     * Adds a clickable menu item.
+     *
+     * @param text label
+     * @param iconFile icon file name
+     */
     private void addMenuItem(String text, String iconFile) {
         JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         itemPanel.setBackground(new Color(230, 57, 70));
@@ -77,6 +98,12 @@ public class SidebarPanel extends JPanel {
         add(Box.createVerticalStrut(10));
     }
 
+    /**
+     * Updates the selected menu item highlight.
+     *
+     * @param label label to select
+     * @param panel parent panel
+     */
     private void selectLabel(JLabel label, JPanel panel) {
         if (selectedLabel != null) {
             selectedLabel.getParent().setBackground(new Color(230, 57, 70));
@@ -85,6 +112,11 @@ public class SidebarPanel extends JPanel {
         panel.setBackground(new Color(180, 40, 50));
     }
 
+    /**
+     * Handles menu selection actions.
+     *
+     * @param text selected label
+     */
     private void gestisciClick(String text) {
         if (parent == null) return;
 
@@ -131,6 +163,12 @@ public class SidebarPanel extends JPanel {
         }
     }
 
+    /**
+     * Loads an icon from sidebar resources.
+     *
+     * @param fileName icon file name
+     * @return scaled icon
+     */
     private ImageIcon loadIcon(String fileName) {
         try {
             java.net.URL url = getClass().getResource("/theknife/gui/images/" + fileName);

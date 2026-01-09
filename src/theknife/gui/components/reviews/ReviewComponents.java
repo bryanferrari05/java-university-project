@@ -8,8 +8,29 @@ import theknife.controller.GestioneRecensioni;
 import theknife.gui.components.SectionPanels;
 import theknife.model.Recensione;
 
+/**
+ * Review UI builders and dialogs.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class ReviewComponents {
 
+    /**
+     * Creates a new ReviewComponents instance.
+     */
+    public ReviewComponents() {
+    }
+
+    /**
+     * Builds a review card with optional actions.
+     *
+     * @param r review instance
+     * @param consentiRisposta allow owner reply
+     * @param consentiEliminazione allow deletion
+     * @param consentiModifica allow editing
+     * @return card panel
+     */
     public static JPanel cardRecensione(Recensione r, boolean consentiRisposta,
                                         boolean consentiEliminazione, boolean consentiModifica) {
 
@@ -195,6 +216,12 @@ public class ReviewComponents {
         return p;
     }
 
+    /**
+     * Opens a modal dialog listing reviews for a restaurant.
+     *
+     * @param ristoranteId restaurant id
+     * @param ristoranteNome restaurant name
+     */
     public static void apriDialogRecensioni(int ristoranteId, String ristoranteNome) {
 
         JDialog d = new JDialog((Frame) null, "Recensioni - " + ristoranteNome, true);
@@ -245,10 +272,23 @@ public class ReviewComponents {
         d.setVisible(true);
     }
 
+    /**
+     * Prompts the user for a short text input.
+     *
+     * @param prompt message to show
+     * @return input text or null
+     */
     private static String chiediTesto(String prompt) {
         return JOptionPane.showInputDialog(null, prompt, "");
     }
 
+    /**
+     * Prompts the user for a star rating.
+     *
+     * @param parent parent component
+     * @param corrente current rating
+     * @return selected rating or null
+     */
     private static Integer chiediStelle(Component parent, int corrente) {
         JComboBox<String> stelleBox = new JComboBox<>(new String[]{"1", "2", "3", "4", "5"});
         stelleBox.setSelectedItem(String.valueOf(corrente));
@@ -263,6 +303,14 @@ public class ReviewComponents {
         return Integer.parseInt((String) stelleBox.getSelectedItem());
     }
 
+    /**
+     * Prompts the user for a multi-line text.
+     *
+     * @param parent parent component
+     * @param titolo dialog title
+     * @param testoIniziale initial text
+     * @return entered text or null
+     */
     private static String chiediTestoArea(Component parent, String titolo, String testoIniziale) {
         JTextArea area = new JTextArea(6, 24);
         area.setLineWrap(true);

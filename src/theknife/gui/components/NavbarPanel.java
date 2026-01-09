@@ -7,13 +7,30 @@ import theknife.gui.LoginFrame;
 import theknife.gui.RegisterFrame;
 import theknife.utils.Theme;
 
+/**
+ * Top navigation bar with menu toggle and user actions.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 @SuppressWarnings("unused")
 public class NavbarPanel extends JPanel {
 
+    /** Username displayed in the navbar. */
     private final String username;
+    /** Current user role. */
     private final String ruolo;
+    /** Sidebar toggle callback. */
     private final Runnable toggleSidebar;
 
+    /**
+     * Builds the navbar with user context.
+     *
+     * @param username username to display
+     * @param parent parent frame for navigation
+     * @param ruolo current role
+     * @param toggleSidebar callback to toggle sidebar
+     */
     public NavbarPanel(String username, HomeFrame parent, String ruolo, Runnable toggleSidebar) {
         this.username = username;
         this.ruolo = ruolo;
@@ -83,6 +100,12 @@ public class NavbarPanel extends JPanel {
         add(rightPanel, BorderLayout.EAST);
     }
 
+    /**
+     * Creates a styled top-right action button.
+     *
+     * @param text label
+     * @return configured button
+     */
     private JButton creaTopButton(String text) {
         JButton b = new JButton(text);
         b.setBackground(Theme.ACCENT);
@@ -94,7 +117,12 @@ public class NavbarPanel extends JPanel {
         return b;
     }
 
-    /** Carica un’icona dalla cartella /images */
+    /**
+     * Loads a small icon from resources.
+     *
+     * @param path resource path
+     * @return scaled icon
+     */
     private ImageIcon loadIcon(String path) {
         try {
             ImageIcon icon = new ImageIcon(getClass().getResource(path));

@@ -8,18 +8,38 @@ import theknife.gui.components.SidebarPanel;
 import theknife.gui.components.SectionPanels;
 import theknife.model.User;
 
+/**
+ * Main application window with navigation and content panels.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class HomeFrame extends JFrame {
 
+    /** Current logged-in user. */
     private final User user;
+    /** Main content container. */
     private final JPanel mainPanel;
+    /** Sidebar navigation panel. */
     private final SidebarPanel sidebar;
+    /** Sidebar visibility state. */
     private boolean sidebarVisible = false;
 
+    /**
+     * Returns the active user instance.
+     *
+     * @return current user
+     */
     public User getCurrentUser() {
         return user;
     }
 
 
+    /**
+     * Builds the main window for a user session.
+     *
+     * @param user current user
+     */
     public HomeFrame(User user) {
         this.user = user;
 
@@ -57,6 +77,11 @@ public class HomeFrame extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Replaces the main content panel.
+     *
+     * @param panel new content
+     */
     public void showPanel(JPanel panel) {
         mainPanel.removeAll();
         mainPanel.add(panel, BorderLayout.CENTER);
@@ -64,6 +89,9 @@ public class HomeFrame extends JFrame {
         mainPanel.repaint();
     }
 
+    /**
+     * Animates sidebar opening and closing.
+     */
     private void toggleSidebar() {
         sidebarVisible = !sidebarVisible;
         sidebar.setVisible(true);

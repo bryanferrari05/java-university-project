@@ -10,8 +10,25 @@ import theknife.gui.components.SectionPanels;
 import theknife.controller.GestioneRecensioni;
 import theknife.model.Ristorante;
 
+/**
+ * Factory for the restaurant search panel.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class SearchPanelFactory {
 
+    /**
+     * Creates a new SearchPanelFactory instance.
+     */
+    public SearchPanelFactory() {
+    }
+
+    /**
+     * Builds the search UI panel.
+     *
+     * @return panel instance
+     */
     public static JPanel creaCercaRistoranti() {
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -180,6 +197,13 @@ public class SearchPanelFactory {
         return panel;
     }
 
+    /**
+     * Opens a dialog to submit a review.
+     *
+     * @param parent parent component
+     * @param ristorante restaurant model
+     * @param ristoranteId restaurant id
+     */
     private static void apriDialogRecensione(Component parent, Ristorante ristorante, int ristoranteId) {
         JComboBox<String> stelleBox = new JComboBox<>(
                 new String[]{"1", "2", "3", "4", "5"}
@@ -238,6 +262,12 @@ public class SearchPanelFactory {
                 "OK", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Parses the minimum stars selection.
+     *
+     * @param selection combo selection
+     * @return minimum stars or null
+     */
     private static Integer parseMinStars(String selection) {
         if (selection == null || selection.equals("Qualsiasi")) return null;
         String digits = selection.replace("+", "").trim();
@@ -248,6 +278,13 @@ public class SearchPanelFactory {
         }
     }
 
+    /**
+     * Checks if a price string fits the selected range.
+     *
+     * @param prezzo price string
+     * @param fascia selected range
+     * @return true when matched
+     */
     private static boolean priceMatchesRange(String prezzo, String fascia) {
         int level = priceLevel(prezzo);
         if (level == 0) return false;
@@ -265,6 +302,12 @@ public class SearchPanelFactory {
         }
     }
 
+    /**
+     * Converts a price string into a numeric level.
+     *
+     * @param prezzo price string
+     * @return level from 0 to 4+
+     */
     private static int priceLevel(String prezzo) {
         if (prezzo == null) return 0;
         int euro = countChar(prezzo, '\u20AC');
@@ -277,6 +320,13 @@ public class SearchPanelFactory {
         return level;
     }
 
+    /**
+     * Counts occurrences of a character in a string.
+     *
+     * @param text input text
+     * @param target character to count
+     * @return count
+     */
     private static int countChar(String text, char target) {
         int count = 0;
         for (int i = 0; i < text.length(); i++) {

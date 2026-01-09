@@ -5,15 +5,34 @@ import theknife.controller.GestioneRistoranti;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Modal dialog to add a new restaurant for an owner.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class DialogNuovoRistorante extends JDialog {
+    /** Field for restaurant name. */
     private final JTextField nomeField;
+    /** Field for city. */
     private final JTextField cittaField;
+    /** Field for address. */
     private final JTextField indirizzoField;
+    /** Field for cuisine type. */
     private final JTextField tipoField;
+    /** Combo for price range. */
     private final JComboBox<String> fasciaBox;
+    /** Checkbox for delivery option. */
     private final JCheckBox deliveryBox;
+    /** Checkbox for reservation option. */
     private final JCheckBox prenotazioneBox;
 
+    /**
+     * Builds the modal dialog for creating a restaurant.
+     *
+     * @param parent parent frame
+     * @param username owner username
+     */
     public DialogNuovoRistorante(Frame parent, String username) {
         super(parent, "Aggiungi Ristorante", true);
         setLocationRelativeTo(parent);

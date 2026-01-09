@@ -8,16 +8,33 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.*;
 
+/**
+ * Registration window that writes new users to CSV.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class RegisterFrame extends JFrame {
 
+    /** CSV path for users. */
     private static final String PATH_UTENTI = "data/utenti.csv";
+    /** Parent start frame, if provided. */
     private final StartFrame parent;
+    /** Reopen parent when this window closes. */
     private boolean reopenParentOnClose = true;
 
+    /**
+     * Builds a registration window without a parent.
+     */
     public RegisterFrame() {
         this(null);
     }
 
+    /**
+     * Builds a registration window with an optional parent.
+     *
+     * @param parent start frame to reopen on close
+     */
     public RegisterFrame(StartFrame parent) {
         this.parent = parent;
 
@@ -105,6 +122,12 @@ public class RegisterFrame extends JFrame {
         });
     }
 
+    /**
+     * Checks if a username already exists in CSV.
+     *
+     * @param username username to check
+     * @return true if found
+     */
     private boolean usernameEsistente(String username) {
         try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
             String line;
@@ -121,6 +144,17 @@ public class RegisterFrame extends JFrame {
         return false;
     }
 
+    /**
+     * Appends a new user record to CSV.
+     *
+     * @param nome name
+     * @param cognome surname
+     * @param residenza city
+     * @param username username
+     * @param password raw password
+     * @param ruolo role
+     * @return true when saved
+     */
     private boolean salvaUtente(String nome, String cognome, String residenza, String username, String password, String ruolo) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(PATH_UTENTI, true))) {
             String hashedPassword = hashPassword(password);
@@ -136,6 +170,12 @@ public class RegisterFrame extends JFrame {
         }
     }
 
+    /**
+     * Hashes a password using SHA-256.
+     *
+     * @param password raw password
+     * @return hash string
+     */
     private static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

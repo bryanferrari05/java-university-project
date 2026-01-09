@@ -9,8 +9,25 @@ import theknife.controller.GestioneRistoranti;
 import theknife.gui.components.SectionPanels;
 import theknife.model.Recensione;
 
+/**
+ * Factory for customer and owner review panels.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class ReviewsPanelFactory {
 
+    /**
+     * Creates a new ReviewsPanelFactory instance.
+     */
+    public ReviewsPanelFactory() {
+    }
+
+    /**
+     * Builds the panel with reviews written by the user.
+     *
+     * @return panel instance
+     */
     public static JPanel creaRecensioniCliente() {
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -50,6 +67,11 @@ public class ReviewsPanelFactory {
         return panel;
     }
 
+    /**
+     * Builds the panel with reviews received by the owner.
+     *
+     * @return panel instance
+     */
     public static JPanel creaRecensioniRistoratore() {
 
         JPanel panel = new JPanel(new BorderLayout());

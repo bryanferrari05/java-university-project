@@ -29,8 +29,25 @@ import theknife.gui.components.search.RistoranteRepository;
 import theknife.model.Ristorante;
 import theknife.model.User;
 
+/**
+ * Factory for the favorites panel.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class FavoritesPanelFactory {
 
+    /**
+     * Creates a new FavoritesPanelFactory instance.
+     */
+    public FavoritesPanelFactory() {
+    }
+
+    /**
+     * Builds the favorites panel for the current user.
+     *
+     * @return panel instance
+     */
     public static JPanel creaMieiPreferiti() {
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -190,6 +207,11 @@ public class FavoritesPanelFactory {
         return panel;
     }
 
+    /**
+     * Sorts a list of integers using insertion sort.
+     *
+     * @param list list to sort
+     */
     private static void insertionSort(List<Integer> list) {
         for (int i = 1; i < list.size(); i++) {
             Integer key = list.get(i);
@@ -202,6 +224,13 @@ public class FavoritesPanelFactory {
         }
     }
 
+    /**
+     * Compares nullable integers treating null as greater.
+     *
+     * @param a first value
+     * @param b second value
+     * @return comparison result
+     */
     private static int compareNullable(Integer a, Integer b) {
         if (a == null && b == null) return 0;
         if (a == null) return 1;
@@ -209,6 +238,12 @@ public class FavoritesPanelFactory {
         return Integer.compare(a, b);
     }
 
+    /**
+     * Finds the last valid id in a list.
+     *
+     * @param list list of ids
+     * @return last valid id or -1
+     */
     private static int ultimoIdValido(List<Integer> list) {
         for (int i = list.size() - 1; i >= 0; i--) {
             Integer v = list.get(i);
@@ -217,12 +252,28 @@ public class FavoritesPanelFactory {
         return -1;
     }
 
+    /**
+     * Simple spinner component used for loading.
+     *
+     * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+     */
     private static class Spinner extends JPanel {
+        /** Current rotation angle. */
         private int angle = 0;
+        /** Spinner color. */
         private final Color color;
+        /** Spinner size in pixels. */
         private final int size;
+        /** Animation timer. */
         private final Timer timer;
 
+        /**
+         * Builds a spinner with a given color and size.
+         *
+         * @param color spinner color
+         * @param size size in pixels
+         */
         Spinner(Color color, int size) {
             this.color = color;
             this.size = size;
@@ -239,12 +290,20 @@ public class FavoritesPanelFactory {
         }
 
         @Override
+        /**
+         * Stops the animation when removed.
+         */
         public void removeNotify() {
             super.removeNotify();
             timer.stop();
         }
 
         @Override
+        /**
+         * Paints the spinner arc.
+         *
+         * @param g graphics context
+         */
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g.create();

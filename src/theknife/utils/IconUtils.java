@@ -4,9 +4,27 @@ import javax.swing.ImageIcon;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Image icon loading and color utilities.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class IconUtils {
 
-    /** Carica e ridimensiona un'icona mantenendo la massima qualità visiva. */
+    /**
+     * Creates a new IconUtils instance.
+     */
+    public IconUtils() {
+    }
+
+    /**
+     * Loads and resizes an icon with high-quality rendering.
+     *
+     * @param resourcePath classpath resource path
+     * @param sizePx target size in pixels
+     * @return resized icon or null when missing
+     */
     public static ImageIcon load(String resourcePath, int sizePx) {
         java.net.URL url = IconUtils.class.getResource(resourcePath);
         if (url == null) {
@@ -34,7 +52,13 @@ public class IconUtils {
         return new ImageIcon(resized);
     }
 
-    /** Applica una tinta uniforme mantenendo la trasparenza. */
+    /**
+     * Applies a flat tint while preserving transparency.
+     *
+     * @param src source icon
+     * @param color tint color
+     * @return tinted icon or null when source is null
+     */
     public static ImageIcon tint(ImageIcon src, Color color) {
         if (src == null) return null;
         int w = src.getIconWidth(), h = src.getIconHeight();

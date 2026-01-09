@@ -12,16 +12,40 @@ import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.List;
 
+/**
+ * Detail window that shows restaurant info and reviews.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class RestaurantDetailsFrame extends JFrame {
 
+    /** Current user viewing the details. */
     private final User user;
+    /** CSV row id for the restaurant. */
     private final int restaurantId;
+    /** Parent window to restore when closed. */
     private final Window parentWindow;
 
+    /**
+     * Builds a details window without a parent window.
+     *
+     * @param user current user
+     * @param restaurantId restaurant id
+     * @param r restaurant model
+     */
     public RestaurantDetailsFrame(User user, int restaurantId, Ristorante r) {
         this(null, user, restaurantId, r);
     }
 
+    /**
+     * Builds a details window and hides the parent window.
+     *
+     * @param parentWindow parent window to hide and restore
+     * @param user current user
+     * @param restaurantId restaurant id
+     * @param r restaurant model
+     */
     public RestaurantDetailsFrame(Window parentWindow, User user, int restaurantId, Ristorante r) {
 
         this.parentWindow = parentWindow;
@@ -155,6 +179,9 @@ public class RestaurantDetailsFrame extends JFrame {
 
     // --------------------- SALVATAGGIO PREFERITI ---------------------
 
+    /**
+     * Persists current favorites into the users CSV file.
+     */
     private void salvaPreferitiNelCSV() {
         try {
             File f = new File("data/utenti.csv");
@@ -207,6 +234,11 @@ public class RestaurantDetailsFrame extends JFrame {
 
     // --------------------- BOTTONE DINAMICO ---------------------
 
+    /**
+     * Updates the favorites button label based on state.
+     *
+     * @param btn button to update
+     */
     private void aggiornaBottone(JButton btn) {
         if (user.isPreferito(restaurantId)) {
             btn.setText("Rimuovi dai preferiti");
@@ -217,6 +249,13 @@ public class RestaurantDetailsFrame extends JFrame {
 
     // --------------------- COMPONENTI DI STILE ---------------------
 
+    /**
+     * Builds a label/value row for details.
+     *
+     * @param label left label
+     * @param value right value
+     * @return row panel
+     */
     private JPanel makeRow(String label, String value) {
         JPanel row = new JPanel(new BorderLayout());
         row.setBackground(Color.WHITE);
@@ -234,6 +273,12 @@ public class RestaurantDetailsFrame extends JFrame {
         return row;
     }
 
+    /**
+     * Builds a section title label.
+     *
+     * @param text title text
+     * @return label instance
+     */
     private JLabel sectionTitle(String text) {
         JLabel title = new JLabel(text);
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
@@ -242,6 +287,13 @@ public class RestaurantDetailsFrame extends JFrame {
         return title;
     }
 
+    /**
+     * Builds a scrollable text box for long content.
+     *
+     * @param text content text
+     * @param height preferred height
+     * @return scroll pane
+     */
     private JScrollPane bigTextBox(String text, int height) {
         JTextArea area = new JTextArea(text);
         area.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -264,6 +316,11 @@ public class RestaurantDetailsFrame extends JFrame {
         return pane;
     }
 
+    /**
+     * Builds the reviews section for the restaurant.
+     *
+     * @return reviews panel
+     */
     private JPanel makeRecensioniPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));

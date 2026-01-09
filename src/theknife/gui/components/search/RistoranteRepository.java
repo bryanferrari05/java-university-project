@@ -7,8 +7,25 @@ import java.util.List;
 
 import theknife.model.Ristorante;
 
+/**
+ * Loads restaurant data from CSV for search panels.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class RistoranteRepository {
 
+    /**
+     * Creates a new RistoranteRepository instance.
+     */
+    public RistoranteRepository() {
+    }
+
+    /**
+     * Loads all restaurants from CSV.
+     *
+     * @return list of restaurants
+     */
     public static List<Ristorante> getRistoranti() {
 
         List<Ristorante> lista = new ArrayList<>();
@@ -51,6 +68,13 @@ public class RistoranteRepository {
         return lista;
     }
 
+    /**
+     * Loads restaurants filtered by city with a max limit.
+     *
+     * @param residenza city name
+     * @param limit maximum results
+     * @return list of restaurants
+     */
     public static List<Ristorante> getRistorantiByCityLimit(String residenza, int limit) {
         List<Ristorante> risultati = new ArrayList<>();
         if (residenza == null || residenza.trim().isEmpty() || limit <= 0) return risultati;
@@ -97,6 +121,12 @@ public class RistoranteRepository {
         return risultati;
     }
 
+    /**
+     * Resolves the CSV row id for a restaurant.
+     *
+     * @param target restaurant model
+     * @return row id or -1
+     */
     public static int getIdByRistorante(Ristorante target) {
         List<Ristorante> lista = getRistoranti();
 
@@ -109,6 +139,12 @@ public class RistoranteRepository {
         return -1;
     }
 
+    /**
+     * Normalizes a city string for matching.
+     *
+     * @param text raw city text
+     * @return normalized city
+     */
     private static String normalizeCity(String text) {
         if (text == null) return "";
         String lower = text.trim().toLowerCase();

@@ -16,8 +16,17 @@ import javax.swing.SwingConstants;
 import theknife.model.User;
 import theknife.utils.Theme;
 
+/**
+ * Initial access screen with login, register, or guest flow.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class StartFrame extends JFrame {
 
+    /**
+     * Builds the start window and hooks the actions.
+     */
     public StartFrame() {
         setTitle("TheKnife");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

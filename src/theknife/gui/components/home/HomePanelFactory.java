@@ -8,8 +8,25 @@ import theknife.gui.components.search.RistoranteRepository;
 import theknife.model.Ristorante;
 import theknife.model.User;
 
+/**
+ * Factory for building the home welcome panel.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class HomePanelFactory {
 
+    /**
+     * Creates a new HomePanelFactory instance.
+     */
+    public HomePanelFactory() {
+    }
+
+    /**
+     * Builds the welcome panel based on session user.
+     *
+     * @return panel instance
+     */
     public static JPanel creaHomeBenvenuto() {
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -64,6 +81,12 @@ public class HomePanelFactory {
         return panel;
     }
 
+    /**
+     * Builds a small grid of restaurants for a city.
+     *
+     * @param residenza city name
+     * @return panel or null when not available
+     */
     private static JPanel creaRistorantiCitta(String residenza) {
         if (residenza == null || residenza.trim().isEmpty()) return null;
 

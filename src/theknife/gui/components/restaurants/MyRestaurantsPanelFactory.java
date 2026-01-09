@@ -8,8 +8,25 @@ import theknife.gui.components.SectionPanels;
 import theknife.gui.components.reviews.ReviewComponents;
 import theknife.controller.GestioneRistoranti;
 
+/**
+ * Factory for the owner restaurants panel.
+ *
+ * @author Bryan Ferrari
+ * @author Jacopo Fabbri
+ */
 public class MyRestaurantsPanelFactory {
 
+    /**
+     * Creates a new MyRestaurantsPanelFactory instance.
+     */
+    public MyRestaurantsPanelFactory() {
+    }
+
+    /**
+     * Builds the panel listing restaurants owned by the user.
+     *
+     * @return panel instance
+     */
     public static JPanel creaMieiRistoranti() {
 
         JPanel panel = new JPanel(new BorderLayout());

@@ -1,4 +1,3 @@
 Autori:
-- Nome1
-- Nome2
-- Nome3
+- Bryan Ferrari
+- Jacopo Fabbri
