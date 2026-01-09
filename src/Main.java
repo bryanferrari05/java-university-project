@@ -11,7 +11,7 @@ public class Main {
      * @param args command-line arguments
      */
     public static void main(String[] args) {
-        System.out.println("Ciao mondo, il progetto Java funziona! bene! feret");
+        System.out.println("Ciao mondo, il progetto Java funziona! bene!");
 
 
     }

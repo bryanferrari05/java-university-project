@@ -1,0 +1,3 @@
+Main-Class: theknife.TheKnife
+Class-Path: lib/gson-2.10.1.jar
+
