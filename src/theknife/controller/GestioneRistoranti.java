@@ -245,14 +245,6 @@ public class GestioneRistoranti {
     }
 
     /**
-     * Placeholder for full CSV persistence.
-     *
-     * @param path CSV path
-     */
-    public static synchronized void saveToCSV(String path) {
-    }
-
-    /**
      * Appends a restaurant to the CSV file.
      *
      * @param r restaurant record
