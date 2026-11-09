@@ -112,21 +112,4 @@ public class HomeFrame extends JFrame {
         });
         timer.start();
     }
-
-        @Override
-        public void setVisible(boolean visible) {
-            if (!visible) {
-                System.out.println("ATTENZIONE: HomeFrame nascosta!");
-                Thread.dumpStack();
-            }
-            super.setVisible(visible);
-        }
-
-        @Override
-        public void dispose() {
-            System.out.println("ATTENZIONE: HomeFrame chiusa!");
-            Thread.dumpStack();
-            super.dispose();
-        }
-
 }
