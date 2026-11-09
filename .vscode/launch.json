@@ -3,45 +3,10 @@
   "configurations": [
     {
       "type": "java",
-<<<<<<< Updated upstream
-      "name": "TheKnife",
-      "request": "launch",
-      "mainClass": "theknife.TheKnife",
-      "projectName": "GitHub_fff65502"
-    },
-    {
-      "type": "java",
-      "name": "Main",
-      "request": "launch",
-      "mainClass": "Main",
-      "projectName": "GitHub_fff65502"
-    },
-    {
-      "type": "java",
-      "name": "TheKnife",
-      "request": "launch",
-      "mainClass": "theknife.TheKnife",
-      "projectName": "java-university-project_64e53055"
-    },
-    {
-      "type": "java",
-      "name": "TheKnife",
-      "request": "launch",
-      "mainClass": "theknife.TheKnife",
-      "projectName": "JAVA-UNIVERSITY-PROJECT"
-=======
-      "name": "Main",
-      "request": "launch",
-      "mainClass": "Main",
-      "projectName": "java-university-project_995d2848"
-    },
-    {
-      "type": "java",
       "name": "Run TheKnife",
       "request": "launch",
       "mainClass": "theknife.TheKnife",
       "cwd": "${workspaceFolder}"
->>>>>>> Stashed changes
     }
   ]
 }
