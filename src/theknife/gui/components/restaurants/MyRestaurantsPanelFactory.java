@@ -97,7 +97,7 @@ public class MyRestaurantsPanelFactory {
                         );
                         return;
                     }
-                    ReviewComponents.apriDialogRecensioni(ristoranteId, r.getNome());
+                        ReviewComponents.apriDialogRecensioni(panel, ristoranteId, r.getNome());
                 });
 
                 card.add(recensioniBtn, BorderLayout.EAST);

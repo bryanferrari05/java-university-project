@@ -256,11 +256,21 @@ public class ReviewComponents {
      * @param ristoranteId restaurant id
      * @param ristoranteNome restaurant name
      */
-    public static void apriDialogRecensioni(int ristoranteId, String ristoranteNome) {
+        public static void apriDialogRecensioni(
+            Component parent,
+            int ristoranteId,
+            String ristoranteNome) {
 
-        JDialog d = new JDialog((Frame) null, "Recensioni - " + ristoranteNome, true);
+        Window owner = SwingUtilities.getWindowAncestor(parent);
+
+        JDialog d = new JDialog(
+            owner,
+            "Recensioni - " + ristoranteNome,
+            Dialog.ModalityType.APPLICATION_MODAL
+        );
+
         d.setSize(560, 520);
-        d.setLocationRelativeTo(null);
+        d.setLocationRelativeTo(owner);
 
         JPanel container = new JPanel(new BorderLayout());
         container.setBackground(Color.WHITE);
