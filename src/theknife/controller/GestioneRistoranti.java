@@ -1,4 +1,5 @@
 package theknife.controller;
+import theknife.model.Ristorante;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,99 +28,8 @@ public class GestioneRistoranti {
      *
      * @author Bryan Ferrari
  * @author Jacopo Fabbri
-     */
-    public static class Ristorante {
-        /** Restaurant name. */
-        private final String nome;
-        /** City name. */
-        private final String citta;
-        /** Street address. */
-        private final String indirizzo;
-        /** Cuisine type. */
-        private final String tipoCucina;
-        /** Price band. */
-        private final String fasciaPrezzo;
-        /** Delivery availability. */
-        private final boolean delivery;
-        /** Reservation availability. */
-        private final boolean prenotazione;
-        /** Owner username. */
-        private final String proprietario;
 
-        /**
-         * Builds a restaurant record for owners.
-         *
-         * @param nome name
-         * @param citta city
-         * @param indirizzo address
-         * @param tipoCucina cuisine type
-         * @param fasciaPrezzo price band
-         * @param delivery delivery flag
-         * @param prenotazione reservation flag
-         * @param proprietario owner username
-         */
-        public Ristorante(String nome, String citta, String indirizzo, String tipoCucina, String fasciaPrezzo, boolean delivery, boolean prenotazione, String proprietario) {
-            this.nome = nome;
-            this.citta = citta;
-            this.indirizzo = indirizzo;
-            this.tipoCucina = tipoCucina;
-            this.fasciaPrezzo = fasciaPrezzo;
-            this.delivery = delivery;
-            this.prenotazione = prenotazione;
-            this.proprietario = proprietario;
-        }
-
-        /**
-         * Returns restaurant name.
-         *
-         * @return restaurant name
-         */
-        public String getNome() { return nome; }
-        /**
-         * Returns city name.
-         *
-         * @return city name
-         */
-        public String getCitta() { return citta; }
-        /**
-         * Returns address.
-         *
-         * @return address
-         */
-        public String getIndirizzo() { return indirizzo; }
-        /**
-         * Returns cuisine type.
-         *
-         * @return cuisine type
-         */
-        public String getTipoCucina() { return tipoCucina; }
-        /**
-         * Returns price band.
-         *
-         * @return price band
-         */
-        public String getFasciaPrezzo() { return fasciaPrezzo; }
-        /**
-         * Returns true if delivery is available.
-         *
-         * @return true if delivery is available
-         */
-        public boolean isDelivery() { return delivery; }
-        /**
-         * Returns true if reservation is available.
-         *
-         * @return true if reservation is available
-         */
-        public boolean isPrenotazione() { return prenotazione; }
-        /**
-         * Returns owner username.
-         *
-         * @return owner username
-         */
-        public String getProprietario() { return proprietario; }
-    }
-
-    /** In-memory list of restaurants. */
+  /** In-memory list of restaurants. */
     private static final List<Ristorante> RISTORANTI = new ArrayList<>();
     /** CSV path for restaurants. */
     private static final String CSV_PATH = "data/ristoranti.csv";

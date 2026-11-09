@@ -37,6 +37,7 @@ public class Ristorante {
     private String facilitiesAndServices;
     /** Description text. */
     private String description;
+    private String proprietario;
 
     // ---- DERIVATI AUTOMATICAMENTE ----
     /** True when delivery or takeaway is detected. */
@@ -95,6 +96,38 @@ public class Ristorante {
                 text.contains("reservation")
                 || text.contains("book")
                 || text.contains("prenot");
+    }
+
+        /**
+     * Costruttore per i ristoranti inseriti dai gestori.
+     *
+     * @param nome nome del ristorante
+     * @param citta città
+     * @param indirizzo indirizzo
+     * @param tipoCucina tipologia di cucina
+     * @param fasciaPrezzo fascia di prezzo
+     * @param delivery disponibilità delivery
+     * @param prenotazione disponibilità prenotazione
+     * @param proprietario username del gestore
+     */
+    public Ristorante(
+            String nome,
+            String citta,
+            String indirizzo,
+            String tipoCucina,
+            String fasciaPrezzo,
+            boolean delivery,
+            boolean prenotazione,
+            String proprietario) {
+
+        this.nome = nome;
+        this.location = citta;
+        this.address = indirizzo;
+        this.cuisine = tipoCucina;
+        this.price = fasciaPrezzo;
+        this.delivery = delivery;
+        this.prenotazione = prenotazione;
+        this.proprietario = proprietario;
     }
 
     // ---- GETTER NUOVI (per dettagli) ----
@@ -243,5 +276,32 @@ public class Ristorante {
      */
     public String getFasciaPrezzo() {
         return price;
+    }
+
+        /**
+     * Restituisce il proprietario del ristorante.
+     *
+     * @return username del proprietario
+     */
+    public String getProprietario() {
+        return proprietario;
+    }
+
+    /**
+     * Imposta il proprietario del ristorante.
+     *
+     * @param proprietario username del proprietario
+     */
+    public void setProprietario(String proprietario) {
+        this.proprietario = proprietario;
+    }
+
+        /**
+     * Restituisce l'indirizzo del ristorante.
+     *
+     * @return indirizzo del ristorante
+     */
+    public String getIndirizzo() {
+        return address;
     }
 }

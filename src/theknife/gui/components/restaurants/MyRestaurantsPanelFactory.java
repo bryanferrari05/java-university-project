@@ -7,6 +7,7 @@ import java.util.List;
 import theknife.gui.components.SectionPanels;
 import theknife.gui.components.reviews.ReviewComponents;
 import theknife.controller.GestioneRistoranti;
+import theknife.model.Ristorante;
 
 /**
  * Factory for the owner restaurants panel.
@@ -42,10 +43,10 @@ public class MyRestaurantsPanelFactory {
         content.setBackground(Color.WHITE);
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-        List<GestioneRistoranti.Ristorante> miei =
-                GestioneRistoranti.getRistorantiProprietario(
-                        SectionPanels.CURRENT_USERNAME
-                );
+        List<Ristorante> miei =
+        GestioneRistoranti.getRistorantiProprietario(
+                SectionPanels.CURRENT_USERNAME
+        );
         List<Integer> ids =
                 GestioneRistoranti.getRistorantiIdsProprietario(
                         SectionPanels.CURRENT_USERNAME
@@ -57,7 +58,7 @@ public class MyRestaurantsPanelFactory {
             content.add(msg);
         } else {
             for (int i = 0; i < miei.size(); i++) {
-                GestioneRistoranti.Ristorante r = miei.get(i);
+                Ristorante r = miei.get(i);
                 int ristoranteId = i < ids.size() ? ids.get(i) : -1;
 
                 JPanel card = new JPanel(new BorderLayout());

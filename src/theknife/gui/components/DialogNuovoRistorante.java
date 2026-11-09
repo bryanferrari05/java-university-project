@@ -1,6 +1,7 @@
 package theknife.gui.components;
 
 import theknife.controller.GestioneRistoranti;
+import theknife.model.Ristorante;
 
 import javax.swing.*;
 import java.awt.*;
@@ -89,7 +90,10 @@ public class DialogNuovoRistorante extends JDialog {
                 return;
             }
 
-            GestioneRistoranti.aggiungiRistorante(new GestioneRistoranti.Ristorante(nome, citta, indirizzo, tipo, fascia, delivery, prenotazione, username));
+                GestioneRistoranti.aggiungiRistorante(
+        new Ristorante(nome, citta, indirizzo, tipo, fascia,
+                    delivery, prenotazione, username)
+    );
             JOptionPane.showMessageDialog(this, "Ristorante aggiunto con successo", "OK", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         });
