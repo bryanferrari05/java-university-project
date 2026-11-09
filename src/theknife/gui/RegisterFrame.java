@@ -7,6 +7,7 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.*;
+import theknife.controller.GestioneUtenti;
 
 /**
  * Registration window that writes new users to CSV.
@@ -89,10 +90,21 @@ public class RegisterFrame extends JFrame {
                 return;
             }
 
-            if (usernameEsistente(username)) {
-                JOptionPane.showMessageDialog(this, "Username già registrato!", "Errore", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            try {
+                    if (GestioneUtenti.usernameEsistente(username)) {
+                        JOptionPane.showMessageDialog(
+                            this,
+                            "Username già registrato!",
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                } catch (IOException ex)
+                {
+                    JOptionPane.showMessageDialog(this, "Impossibile verificare lo username.", "Errore", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
             if (salvaUtente(nome, cognome, residenza, username, password, ruolo)) {
                 JOptionPane.showMessageDialog(this, "Registrazione completata!\nOra puoi effettuare il login.",
@@ -126,21 +138,6 @@ public class RegisterFrame extends JFrame {
      * @param username username to check
      * @return true if found
      */
-    private boolean usernameEsistente(String username) {
-        try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("nome,")) continue;
-                String[] campi = line.split(",");
-                if (campi.length >= 3 && campi[2].trim().equalsIgnoreCase(username)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Errore nel controllo username: " + e.getMessage());
-        }
-        return false;
-    }
 
     /**
      * Appends a new user record to CSV.

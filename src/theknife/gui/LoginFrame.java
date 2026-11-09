@@ -9,6 +9,7 @@ import javax.swing.*;
 
 import theknife.model.User;
 import theknife.utils.Theme;
+import theknife.controller.GestioneUtenti;
 
 /**
  * Login window that validates credentials and opens HomeFrame.
@@ -82,7 +83,21 @@ public class LoginFrame extends JFrame {
                 return;
             }
 
-            User user = verificaCredenziali(username, password);
+            User user;
+
+            try {
+                user = GestioneUtenti.verificaCredenziali(
+                    username, password
+                );
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Errore lettura utenti.csv",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
 
             if (user != null) {
                 reopenParentOnClose = false;
@@ -109,85 +124,5 @@ public class LoginFrame extends JFrame {
                 }
             }
         });
-    }
-
-    /**
-     * Validates credentials and loads the full user object.
-     *
-     * @param username username
-     * @param password raw password
-     * @return user instance or null
-     */
-    private User verificaCredenziali(String username, String password) {
-        String hash = hashPassword(password);
-
-        try (BufferedReader br = new BufferedReader(new FileReader(PATH_UTENTI))) {
-            String line;
-
-            while ((line = br.readLine()) != null) {
-
-                // salta intestazione CSV
-                if (line.startsWith("nome,")) continue;
-
-                String[] campi = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-
-                if (campi.length >= 5) {
-                    String csvNome     = campi[0].trim();
-                    String csvCognome  = campi[1].trim();
-                    String csvUsername = campi[2].trim();
-                    String csvHash     = campi[3].trim();
-                    String csvRuolo    = campi[4].trim();
-
-                    String csvResidenza = "";
-                    String preferitiRaw = "";
-                    if (campi.length >= 7) {
-                        csvResidenza = campi[5].trim();
-                        preferitiRaw = campi[6].trim();
-                    } else if (campi.length >= 6) {
-                        csvResidenza = campi[5].trim();
-                    }
-
-                    if (csvUsername.equals(username) && csvHash.equals(hash)) {
-
-                        // ⭐ CREA L'UTENTE COMPLETO
-                        User u = new User(csvUsername, csvHash, csvNome, csvCognome, csvRuolo, csvResidenza);
-
-                        // ⭐ CARICA I PREFERITI (colonna 6)
-                        if (!preferitiRaw.isEmpty()) {
-                            String[] pref = preferitiRaw.split("-");
-                            for (String p : pref) {
-                                try {
-                                    u.aggiungiPreferito(Integer.parseInt(p));
-                                } catch (NumberFormatException ignored) {}
-                            }
-                        }
-
-                        return u;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Errore lettura utenti.csv");
-        }
-
-        return null;
-    }
-
-    /**
-     * Hashes a password with SHA-256 when available.
-     *
-     * @param password raw password
-     * @return hash string or raw password on error
-     */
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hash) sb.append(String.format("%02x", b));
-            return sb.toString();
-        } catch (Exception e) {
-            return password;
-        }
     }
 }
