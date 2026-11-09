@@ -96,12 +96,10 @@ public class LoginFrame extends JFrame {
             }
         });
 
-        setLocationRelativeTo(null);
-        setVisible(true);
-
         pack();
         setMinimumSize(new Dimension(420, 350));
         setLocationRelativeTo(null);
+        setVisible(true);
 
         addWindowListener(new WindowAdapter() {
             @Override

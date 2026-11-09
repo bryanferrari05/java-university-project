@@ -105,12 +105,10 @@ public class RegisterFrame extends JFrame {
             }
         });
 
-        setLocationRelativeTo(null);
-        setVisible(true);
-
         pack();
         setMinimumSize(new Dimension(400, 350));
         setLocationRelativeTo(null);
+        setVisible(true);
 
         addWindowListener(new WindowAdapter() {
             @Override
