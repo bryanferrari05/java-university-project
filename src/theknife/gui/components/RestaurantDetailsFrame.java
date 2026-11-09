@@ -52,9 +52,9 @@ public class RestaurantDetailsFrame extends JFrame {
         this.user = user;
         this.restaurantId = restaurantId;
 
-        if (this.parentWindow != null) {
-            this.parentWindow.setVisible(false);
-        }
+        //if (this.parentWindow != null) {
+          //  this.parentWindow.setVisible(false);
+        //}
 
         // ----- FINESTRA PRINCIPALE -----
         setTitle("Dettagli – " + r.getNome());
