@@ -200,10 +200,21 @@ public class ReviewComponents {
                         );
                         JOptionPane.showMessageDialog(p, "Risposta inviata", "OK",
                                 JOptionPane.INFORMATION_MESSAGE);
-
                         Window w = SwingUtilities.getWindowAncestor(p);
-                        if (w != null) w.dispose();
-                        apriDialogRecensioni(r.getRistoranteId(), r.getRistoranteNome());
+
+                        if (w instanceof JDialog) {
+                            // Chiude solo la finestra delle recensioni
+                            w.dispose();
+                            apriDialogRecensioni(r.getRistoranteId(), r.getRistoranteNome());
+
+                        } else {
+                            // Aggiorna la schermata principale senza chiuderla
+                            if (SectionPanels.NAVIGATE != null) {
+                                SectionPanels.NAVIGATE.accept(
+                                    ReviewsPanelFactory.creaRecensioniRistoratore()
+                                );
+                            }
+                        }
                     }
                 });
                 actions.add(rispondi);
