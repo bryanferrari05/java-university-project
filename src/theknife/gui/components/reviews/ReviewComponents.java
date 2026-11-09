@@ -188,37 +188,60 @@ public class ReviewComponents {
                 actions.add(elimina);
             }
 
-            if (consentiRisposta) {
-                JButton rispondi = new JButton("Rispondi");
-                rispondi.addActionListener(e -> {
-                    String risposta = chiediTesto("Scrivi la risposta (una sola, definitiva):");
-                    if (risposta != null && !risposta.isBlank()) {
-                        GestioneRecensioni.rispondiRistoratore(
-                                r.getRistoranteId(),
-                                r.getAutoreUsername(),
-                                risposta.trim()
-                        );
-                        JOptionPane.showMessageDialog(p, "Risposta inviata", "OK",
-                                JOptionPane.INFORMATION_MESSAGE);
-                        Window w = SwingUtilities.getWindowAncestor(p);
+                    if (consentiRisposta) {
+            JButton rispondi = new JButton("Rispondi");
 
-                        if (w instanceof JDialog) {
-                            // Chiude solo la finestra delle recensioni
-                            w.dispose();
-                            apriDialogRecensioni(r.getRistoranteId(), r.getRistoranteNome());
+            rispondi.addActionListener(e -> {
+                String risposta = chiediTesto(
+                    "Scrivi la risposta (una sola, definitiva):"
+                );
 
-                        } else {
-                            // Aggiorna la schermata principale senza chiuderla
-                            if (SectionPanels.NAVIGATE != null) {
-                                SectionPanels.NAVIGATE.accept(
-                                    ReviewsPanelFactory.creaRecensioniRistoratore()
-                                );
-                            }
-                        }
-                    }
-                });
-                actions.add(rispondi);
-            }
+                if (risposta == null || risposta.isBlank()) {
+                    return;
+                }
+
+                GestioneRecensioni.rispondiRistoratore(
+                    r.getRistoranteId(),
+                    r.getAutoreUsername(),
+                    risposta.trim()
+                );
+
+                // Aggiorna direttamente la recensione
+                JTextArea rep = new JTextArea(
+                    "Risposta del ristoratore:\n" + risposta.trim()
+                );
+
+                rep.setLineWrap(true);
+                rep.setWrapStyleWord(true);
+                rep.setEditable(false);
+                rep.setBackground(new Color(246, 255, 247));
+
+                rep.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(
+                        new Color(220, 245, 225), 1
+                    ),
+                    BorderFactory.createEmptyBorder(6, 8, 6, 8)
+                ));
+
+                // Rimuove il pulsante Rispondi
+                bottom.removeAll();
+
+                // Mostra la risposta al suo posto
+                bottom.add(rep, BorderLayout.CENTER);
+
+                bottom.revalidate();
+                bottom.repaint();
+
+                JOptionPane.showMessageDialog(
+                    p,
+                    "Risposta inviata correttamente!",
+                    "OK",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+            });
+
+            actions.add(rispondi);
+        }
 
             bottom.add(actions, BorderLayout.EAST);
         }
