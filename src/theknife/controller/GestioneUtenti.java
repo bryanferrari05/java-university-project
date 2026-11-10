@@ -113,27 +113,57 @@ public class GestioneUtenti {
  * @return true se esiste, false altrimenti
  * @throws IOException in caso di errore nella lettura
  */
-public static boolean usernameEsistente(String username)
-        throws IOException {
+    public static boolean usernameEsistente(String username)
+            throws IOException {
 
-    try (BufferedReader br =
-            new BufferedReader(new FileReader(PATH_UTENTI))) {
+        try (BufferedReader br =
+                new BufferedReader(new FileReader(PATH_UTENTI))) {
 
-        String line;
+            String line;
 
-        while ((line = br.readLine()) != null) {
-            if (line.startsWith("nome,")) continue;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("nome,")) continue;
 
-            String[] campi = line.split(",");
+                String[] campi = line.split(",");
 
-            if (campi.length >= 3 &&
-                    campi[2].trim().equalsIgnoreCase(username)) {
-                return true;
+                if (campi.length >= 3 &&
+                        campi[2].trim().equalsIgnoreCase(username)) {
+                    return true;
+                }
             }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Salva un nuovo utente nel file CSV.
+     *
+     * @param nome nome dell'utente
+     * @param cognome cognome dell'utente
+     * @param residenza città di residenza
+     * @param username nome utente
+     * @param password password originale
+     * @param ruolo cliente o ristoratore
+     * @return true se il salvataggio riesce, false altrimenti
+     */
+    public static boolean salvaUtente(String nome, String cognome, String residenza, String username, String password, String ruolo) 
+    {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(PATH_UTENTI, true))) 
+        {
+
+            String hashedPassword = hashPassword(password);
+
+            bw.write(String.format("%s,%s,%s,%s,%s,%s,%s%n", nome, cognome, username, hashedPassword, ruolo, residenza, ""));
+            return true;
+
+        } catch (IOException e) 
+        {
+            System.err.println("Errore nella scrittura del file utenti.csv: " + e.getMessage());
+            return false;
         }
     }
 
-    return false;
-}
 
 }
