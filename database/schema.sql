@@ -42,12 +42,25 @@ CREATE TABLE ristoranti (
     green_star VARCHAR(20),
     servizi TEXT,
     descrizione TEXT,
-    id_gestore INTEGER,
-    CONSTRAINT fk_ristoranti_gestore FOREIGN KEY (id_gestore) REFERENCES utenti(id_utente),
     CONSTRAINT chk_prezzo_medio CHECK (prezzo_medio >= 0),
     CONSTRAINT chk_latitudine CHECK (latitudine BETWEEN -90 AND 90),
     CONSTRAINT chk_longitudine CHECK (longitudine BETWEEN -180 AND 180)
 );
+
+
+CREATE TABLE gestione_ristoranti (
+    id_ristorante INTEGER PRIMARY KEY,
+    id_gestore INTEGER NOT NULL,
+
+    CONSTRAINT fk_gestione_ristorante
+        FOREIGN KEY (id_ristorante)
+        REFERENCES ristoranti(id_ristorante),
+
+    CONSTRAINT fk_gestione_gestore
+        FOREIGN KEY (id_gestore)
+        REFERENCES utenti(id_utente)
+);
+
 
 CREATE TABLE recensioni (
     id_recensione INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
